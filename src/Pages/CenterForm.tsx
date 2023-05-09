@@ -380,38 +380,6 @@ export default function CenterForm({
             />
             <P>{errors.desc?.message}</P>
           </Grid>
-
-          <Footer xs={12}>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <FormControlLabel
-                control={
-                  <Controller
-                    control={control}
-                    name="acceptTerms"
-                    defaultValue={false}
-                    render={({ field: { onChange } }) => (
-                      <Checkbox
-                        color="primary"
-                        onChange={(e) => onChange(e.target.checked)}
-                      />
-                    )}
-                  />
-                }
-                label={
-                  <Typography color={errors.acceptTerms ? "error" : "inherit"}>
-                    이용약관 및 도카추 회원 가입에 동의합니다.
-                  </Typography>
-                }
-              />
-            </div>
-            <SubmitButton type="submit">보내기</SubmitButton>
-          </Footer>
-          <Grid item xs={12}></Grid>
         </Grid>
         {/* <button type="button" onClick={onSave}>
           임시 저장
@@ -420,6 +388,38 @@ export default function CenterForm({
           초기화
         </button> */}
       </form>
+      <Footer>
+        <div
+          style={{
+            width: "1200px",
+            margin: "0 auto",
+            display: "flex",
+            justifyContent: "space-between",
+          }}
+        >
+          <FormControlLabel
+            control={
+              <Controller
+                control={control}
+                name="acceptTerms"
+                defaultValue={false}
+                render={({ field: { onChange } }) => (
+                  <Checkbox
+                    color="primary"
+                    onChange={(e) => onChange(e.target.checked)}
+                  />
+                )}
+              />
+            }
+            label={
+              <Typography color={errors.acceptTerms ? "error" : "inherit"}>
+                이용약관 및 도카추 회원 가입에 동의합니다.
+              </Typography>
+            }
+          />
+          <SubmitButton type="submit">보내기</SubmitButton>
+        </div>
+      </Footer>
     </Block>
   );
 }

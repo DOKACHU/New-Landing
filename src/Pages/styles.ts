@@ -67,17 +67,20 @@ export const TextArea = styled.textarea`
   }
 `;
 
-export const Footer = styled(Grid)`
+export const Footer = styled.div`
   border: 1px solid #e5e5e5;
   position: fixed;
-  bottom: 0px;
   left: 0px;
-  padding: 10px 80px;
+  bottom: 0px;
+  right: 0px;
+  padding: 10px 0;
   background-color: #fff;
-  width: 100%;
+  /* margin: 0 auto; */
+  /* width: 100%; */
+  margin: 0 auto;
+  /* max-width: 1200px; */
   display: flex;
   justify-content: space-between;
-  align-items: center;
 `;
 
 export const SubmitButton = styled.button`
