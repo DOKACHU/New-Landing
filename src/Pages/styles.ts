@@ -1,10 +1,10 @@
-import styled from "styled-components";
-import { Grid } from "@mui/material";
+import styled, { css } from "styled-components";
 
 export const Block = styled.div`
   min-height: calc(100vh- 56px);
   max-width: 1200px;
   margin: 0 auto;
+  margin-bottom: 80px;
 `;
 
 export const Label = styled.p`
@@ -83,7 +83,7 @@ export const Footer = styled.div`
   justify-content: space-between;
 `;
 
-export const SubmitButton = styled.button`
+export const SubmitButton = styled.button<{ btnType?: string }>`
   padding: 17px 142px;
   color: #fff;
   background-color: #000;
@@ -92,11 +92,80 @@ export const SubmitButton = styled.button`
   font-weight: 600;
   border-radius: 8px;
 
+  ${(props) =>
+    props.btnType &&
+    css`
+      background-color: #fff;
+      border: 1px solid #000;
+      color: #000;
+    `};
+
   &:hover {
     background-color: #e4e4e4;
   }
 
   &:disabled {
     background-color: lightgray;
+  }
+`;
+
+export const CustomDivdier = styled.div`
+  border: 0.5px solid #000;
+  margin-top: 8px;
+`;
+
+export const AddButton = styled.button`
+  margin: 24px 0;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 22px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+`;
+
+export const AddItemSection = styled.div`
+  border-top: 0.5px solid rgba(0, 0, 0, 0.15);
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.15);
+  padding: 26px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 64px;
+`;
+
+export const AddItemBlock = styled.div`
+  border-top: 0.5px solid rgba(0, 0, 0, 0.15);
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.15);
+`;
+
+export const Row = styled.div`
+  display: flex;
+  justify-content: flex-start;
+`;
+
+export const YearInput = styled.input`
+  border: none;
+  width: 40px;
+  &:focus {
+    outline: none;
+  }
+`;
+
+export const MonthInput = styled.input`
+  border: none;
+  width: 30px;
+  &:focus {
+    outline: none;
+  }
+`;
+
+export const ItemInput = styled.input`
+  border: none;
+  /* width: 300px; */
+  /* width: 30px; */
+  &:focus {
+    outline: none;
   }
 `;

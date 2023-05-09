@@ -39,3 +39,10 @@ export function phoneNumber(value: any) {
 export function ErrorEmptyCheck(value: any) {
   return Object.keys(value).length === 0;
 }
+
+export function checkProperties(obj: any) {
+  for (var key in obj) {
+    if (obj[key] !== null && obj[key] != "") return false;
+  }
+  return true;
+}

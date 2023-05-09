@@ -13,11 +13,21 @@ export const schema = yup
       .max(3000, "병원소개는 3000자리 이하로 써주세요.")
       .required("병원소개는 필수 항목 입니다."),
 
+    pdesc: yup
+      .string()
+      .min(1, "자기소개는 1자리 이상 써주세요.")
+      .max(3000, "자기소개는 3000자리 이하로 써주세요.")
+      .required("자기소개는 필수 항목 입니다."),
+
     address1: yup.string().required("주소는 필수 항목 입니다."),
     address2: yup.string().required("상세주소는 필수 항목 입니다."),
 
     subject: yup.string().required("진료항목은 필수 항목 입니다."),
     location: yup.string().required("지역은 필수 항목 입니다."),
+    gender: yup.string().required("성별은 필수 항목 입니다."),
+    career: yup.string().required("경력은 필수 항목 입니다."),
+    school: yup.string().required("학력은 필수 항목 입니다."),
+    license: yup.string().required("자격증은 필수 항목 입니다."),
 
     bizzNum: yup
       .string()
