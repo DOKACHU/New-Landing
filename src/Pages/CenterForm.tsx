@@ -502,12 +502,12 @@ export default function CenterForm({
           <Grid item xs={12}>
             <Label>이용약관</Label>
             <TextArea
-              {...register("desc")}
+              {...register("policy")}
               rows={8}
               readOnly
               // placeholder="병원 소개를 적어주세요."
             />
-            <P>{errors.desc?.message}</P>
+            <P>{errors.policy?.message}</P>
           </Grid>
         </Grid>
         {/* <button type="button" onClick={onSave}>

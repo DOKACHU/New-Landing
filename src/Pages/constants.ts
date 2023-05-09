@@ -29,6 +29,8 @@ export const schema = yup
     school: yup.string().required("학력은 필수 항목 입니다."),
     license: yup.string().required("자격증은 필수 항목 입니다."),
     channel: yup.string(),
+    policy: yup.string(),
+
     tags: yup.string().required("태그는 필수 항목 입니다."),
 
     bizzNum: yup
