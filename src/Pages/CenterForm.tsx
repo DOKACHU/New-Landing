@@ -8,6 +8,9 @@ import {
   Typography,
   Modal,
   Box,
+  FormGroup,
+  Stack,
+  Chip,
 } from "@mui/material";
 import { P } from "../styles";
 import { useState } from "react";
@@ -22,11 +25,14 @@ import {
   TextArea,
   Footer,
   SubmitButton,
+  TagInput,
+  TagButton,
 } from "./styles";
 import { Select } from "../components";
 import { schema } from "./constants";
 import arrow from "./arrow.png";
 import DaumPostcode from "react-daum-postcode";
+import { useCreateCenter, useTags } from "../hooks";
 
 type FormData = yup.InferType<typeof schema>;
 const style = {
@@ -51,6 +57,8 @@ export default function CenterForm({
   const [selectedImage, setSelectedImage] = useState<any>(null);
   const [multipleImages, setMultipleImages] = useState<any>([]);
   const [rawImages, setRawImages] = useState<any>([]);
+  const { mutate: createCenter } = useCreateCenter();
+  const { handleClick, tags, tagsRef } = useTags();
 
   const getLocalStorage =
     localStorage.getItem("temp") === undefined
@@ -102,8 +110,55 @@ export default function CenterForm({
   const onSubmit = (data: FormData) => {
     const isSubmit = ErrorEmptyCheck(errors);
     if (isSubmit) {
-      console.log({ selectedImage, multipleImages, rawImages });
-      console.log(JSON.stringify(data, null, 2));
+      const {
+        name,
+        proNumber,
+        location,
+        bizzNum,
+        address1,
+        address2,
+        subject,
+        phone,
+        email,
+        desc,
+      } = data as any;
+
+      const formData = new FormData(); // 새로운 폼 객체 생성
+      for (let i = 0; i < rawImages.length; i++) {
+        formData.append("centerImages", rawImages[i]);
+      }
+
+      formData.append("registration", selectedImage); // <input name="item" value="hi"> 와 같다.
+      formData.append("centerName", name);
+      formData.append("city", location?.label);
+
+      formData.append("address1", address1);
+      formData.append("address2", address2);
+      formData.append("businessRegistrationNumber", String(bizzNum));
+      formData.append("memberCount", String(proNumber));
+
+      formData.append("therapyCategory", subject?.label);
+      formData.append("phoneNumber", phone);
+
+      formData.append("email", email);
+      formData.append("description", desc);
+      // for (let i = 0; i < tags.length; i++) {
+      //   formData.append(`tags[${i}]`, tags[i]);
+      // }
+
+      createCenter(formData, {
+        onError: (e) => {
+          console.log({ e });
+        },
+        onSuccess: (res) => {
+          console.log({ res });
+          onReset();
+          alert("센터 입점 양식 등록 완료 ");
+        },
+      });
+
+      // console.log({ selectedImage, multipleImages, rawImages });
+      // console.log(JSON.stringify(data, null, 2));
     }
   };
 
@@ -120,17 +175,17 @@ export default function CenterForm({
     localStorage.removeItem("multiImgPreview");
   };
 
-  const onSave = () => {
-    const saveObj = {
-      name: watch("name"),
-      phone: watch("phone"),
-    };
-    localStorage.setItem("temp", JSON.stringify(saveObj));
-    localStorage.setItem("singleImg", selectedImage);
-    localStorage.setItem("singleImgPreview", preview);
-    localStorage.setItem("multiImg", multipleImages);
-    localStorage.setItem("multiImgPreview", rawImages);
-  };
+  // const onSave = () => {
+  //   const saveObj = {
+  //     name: watch("name"),
+  //     phone: watch("phone"),
+  //   };
+  //   localStorage.setItem("temp", JSON.stringify(saveObj));
+  //   localStorage.setItem("singleImg", selectedImage);
+  //   localStorage.setItem("singleImgPreview", preview);
+  //   localStorage.setItem("multiImg", multipleImages);
+  //   localStorage.setItem("multiImgPreview", rawImages);
+  // };
 
   return (
     <Block>
@@ -372,11 +427,85 @@ export default function CenterForm({
           </Grid>
 
           <Grid item xs={12}>
+            <Label>태그 *</Label>
+
+            <FormGroup row>
+              <TagInput
+                {...register("tags")}
+                ref={tagsRef}
+                placeholder="병원 검색 키워드 (키워드는 최대 3개까지 입력 가능합니다.)"
+              />
+              <TagButton
+                disabled={tags.length > 2}
+                type="button"
+                onClick={handleClick}
+              >
+                추가
+              </TagButton>
+            </FormGroup>
+
+            <Stack
+              style={{
+                marginTop: "10px",
+              }}
+              direction={"row"}
+              spacing={1}
+            >
+              {tags.map((tagLabel: string, i: any) => {
+                return <Chip label={tagLabel} key={i} />;
+              })}
+            </Stack>
+            <P>{tags.length === 0 && errors.tags?.message}</P>
+          </Grid>
+
+          {/* <Grid item xs={6}>
+            <Label>태그 *</Label>
+            <Controller
+              control={control}
+              name="tags"
+              render={({ field }) => {
+                return (
+                  <>
+                    <FormGroup row>
+                      <TagInput
+                        {...register("tags")}
+                        ref={tagsRef}
+                        placeholder="병원 검색 키워드 (키워드는 최대 3개까지 입력 가능합니다.)"
+                      />
+                      <TagButton
+                        disabled={tags.length > 2}
+                        type="button"
+                        onClick={handleClick}
+                      >
+                        추가
+                      </TagButton>
+                    </FormGroup>
+                    <Stack
+                      style={{
+                        marginTop: "10px",
+                      }}
+                      {...field}
+                      direction={"row"}
+                      spacing={1}
+                    >
+                      {tags.map((tagLabel: string, i: any) => {
+                        return <Chip label={tagLabel} key={i} />;
+                      })}
+                    </Stack>
+                  </>
+                );
+              }}
+            />
+            <P>{tags.length === 0 && errors.tags?.message}</P>
+          </Grid> */}
+
+          <Grid item xs={12}>
             <Label>이용약관</Label>
             <TextArea
               {...register("desc")}
               rows={8}
-              placeholder="병원 소개를 적어주세요."
+              readOnly
+              // placeholder="병원 소개를 적어주세요."
             />
             <P>{errors.desc?.message}</P>
           </Grid>

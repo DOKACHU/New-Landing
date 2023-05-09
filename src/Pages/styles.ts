@@ -171,3 +171,33 @@ export const ItemInput = styled.input`
     outline: none;
   }
 `;
+
+export const TagInput = styled.input`
+  padding: 12px 16px;
+  border: 1px solid #000;
+  border-radius: 8px 0 0 8px;
+  font-size: 16px;
+  font-weight: 500;
+  width: 90%;
+
+  &:hover {
+    border: 1px solid #e4e4e4;
+  }
+
+  &:focus {
+    background-color: #f4f4f4;
+  }
+`;
+
+export const TagButton = styled.button`
+  padding: 13px 16px;
+  width: 10%;
+  border-radius: 0 8px 8px 0;
+  border: 1px solid #000000;
+  background: #fff;
+  border-left: none;
+
+  &:hover {
+    border: 1px solid #e4e4e4;
+  }
+`;

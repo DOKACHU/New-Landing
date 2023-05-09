@@ -42,7 +42,7 @@ export function ErrorEmptyCheck(value: any) {
 
 export function checkProperties(obj: any) {
   for (var key in obj) {
-    if (obj[key] !== null && obj[key] != "") return false;
+    if (obj[key] !== null && obj[key] !== "") return false;
   }
   return true;
 }

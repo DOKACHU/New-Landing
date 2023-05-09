@@ -102,14 +102,24 @@ export default function BForm() {
   const { onChange: onMultipleChange, ...multiParams } =
     register("multiplePhoto");
 
-  const changeMultipleFiles = (e: any) => {
-    if (e.target?.files) {
-      const imageArray = Array.from(e.target.files).map((file: any) =>
-        URL.createObjectURL(file)
-      ) as any;
+  const changeMultipleFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const imageLists = e.target.files;
+      let imageUrlLists = [...multipleImages];
 
-      setMultipleImages((prevImages: any) => prevImages.concat(imageArray));
-      setRawImages((prevRaws: any) => prevRaws.concat(e.target?.files[0]));
+      if (imageLists) {
+        for (let i = 0; i < imageLists.length; i++) {
+          const currentImageUrl = URL.createObjectURL(imageLists[i]) as any;
+          imageUrlLists.push(currentImageUrl as never);
+          setRawImages([...rawImages, imageLists[i]]);
+        }
+
+        if (imageUrlLists.length > 5) {
+          imageUrlLists = imageUrlLists.slice(0, 5);
+        }
+        setMultipleImages(imageUrlLists);
+        // fileMuitleInput.current.value = "";
+      }
     }
   };
 
@@ -162,7 +172,6 @@ export default function BForm() {
 
   const handleChannelAddClick = (e: any) => {
     e.preventDefault();
-    const { name } = e.target;
     const newObj = {
       content: "",
     };
@@ -172,9 +181,9 @@ export default function BForm() {
   const handleCareerChange = (e: any, index: number) => {
     const { value, name } = e.target;
     console.log({ name });
-    const result = isNumber ? value.replace(/\D/g, "") : value;
+    // const result = isNumber ? value.replace(/\D/g, "") : value;
     let newArr = career.map((item: any, i: number) => {
-      if (index == i) {
+      if (index === i) {
         return { ...item, [name]: value };
       } else {
         return item;
@@ -186,9 +195,9 @@ export default function BForm() {
   const handleSchoolChange = (e: any, index: number) => {
     const { value, name } = e.target;
     console.log({ name });
-    const result = isNumber ? value.replace(/\D/g, "") : value;
+    // const result = isNumber ? value.replace(/\D/g, "") : value;
     let newArr = school.map((item: any, i: number) => {
-      if (index == i) {
+      if (index === i) {
         return { ...item, [name]: value };
       } else {
         return item;
@@ -200,9 +209,9 @@ export default function BForm() {
   const handleLicenseChange = (e: any, index: number) => {
     const { value, name } = e.target;
     console.log({ name, value });
-    const result = isNumber ? value.replace(/\D/g, "") : value;
+    // const result = isNumber ? value.replace(/\D/g, "") : value;
     let newArr = license.map((item: any, i: number) => {
-      if (index == i) {
+      if (index === i) {
         return { ...item, [name]: value };
       } else {
         return item;
@@ -214,9 +223,9 @@ export default function BForm() {
   const handleChannelChange = (e: any, index: number) => {
     const { value, name } = e.target;
     console.log({ name, value });
-    const result = isNumber ? value.replace(/\D/g, "") : value;
+    // const result = isNumber ? value.replace(/\D/g, "") : value;
     let newArr = channel.map((item: any, i: number) => {
-      if (index == i) {
+      if (index === i) {
         return { ...item, [name]: value };
       } else {
         return item;
