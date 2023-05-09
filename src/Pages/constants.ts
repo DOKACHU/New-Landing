@@ -3,7 +3,7 @@ import * as yup from "yup";
 const phoneRegExp =
   /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{2,4}?$/;
 const nameRegExp = /^[가-힣]{2,10}|[a-zA-Z]{2,10}\s[a-zA-Z]{2,10}$/;
-const bizzNumberRegExp = /^[0-9]{3}-[0-9]{2}-[0-9]{5}$/;
+// const bizzNumberRegExp = /^[0-9]{3}-[0-9]{2}-[0-9]{5}$/;
 
 export const schema = yup
   .object({
@@ -28,6 +28,7 @@ export const schema = yup
     career: yup.string().required("경력은 필수 항목 입니다."),
     school: yup.string().required("학력은 필수 항목 입니다."),
     license: yup.string().required("자격증은 필수 항목 입니다."),
+    channel: yup.string(),
 
     bizzNum: yup
       .string()

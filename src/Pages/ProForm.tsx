@@ -4,7 +4,7 @@ import * as yup from "yup";
 import { Grid, Typography } from "@mui/material";
 import { P } from "../styles";
 import { useState } from "react";
-import { ErrorEmptyCheck, checkProperties } from "../utils";
+import { ErrorEmptyCheck } from "../utils";
 import { schema } from "./constants";
 import {
   Block,
@@ -124,50 +124,49 @@ export default function BForm() {
 
   const handleAddClick = (e: any) => {
     e.preventDefault();
-    const { name } = e.target;
 
-    if (name === "career") {
-      const newObj = {
-        startYear: "",
-        startMonth: "",
-        endYear: "",
-        endMonth: "",
-        content: "",
-      };
-      setCareer([...career, newObj]);
-    }
+    const newObj = {
+      startYear: "",
+      startMonth: "",
+      endYear: "",
+      endMonth: "",
+      content: "",
+    };
+    setCareer([...career, newObj]);
   };
 
   const handleSchoolAddClick = (e: any) => {
     e.preventDefault();
-    const { name } = e.target;
 
-    if (name === "school") {
-      const newObj = {
-        startYear: "",
-        startMonth: "",
-        endYear: "",
-        endMonth: "",
-        content: "",
-      };
-      setSchool([...school, newObj]);
-    }
+    const newObj = {
+      startYear: "",
+      startMonth: "",
+      endYear: "",
+      endMonth: "",
+      content: "",
+    };
+    setSchool([...school, newObj]);
   };
 
   const handleLicenseAddClick = (e: any) => {
     e.preventDefault();
-    const { name } = e.target;
+    const newObj = {
+      licenseName: "",
+      licenseNumber: "",
+      registerYear: "",
+      registerMonth: "",
+      registerDay: "",
+    };
+    setLicense([...license, newObj]);
+  };
 
-    if (name === "license") {
-      const newObj = {
-        licenseName: "",
-        licenseNumber: "",
-        registerYear: "",
-        registerMonth: "",
-        registerDay: "",
-      };
-      setLicense([...license, newObj]);
-    }
+  const handleChannelAddClick = (e: any) => {
+    e.preventDefault();
+    const { name } = e.target;
+    const newObj = {
+      content: "",
+    };
+    setChannel([...channel, newObj]);
   };
 
   const handleCareerChange = (e: any, index: number) => {
@@ -210,6 +209,20 @@ export default function BForm() {
       }
     });
     setLicense(newArr);
+  };
+
+  const handleChannelChange = (e: any, index: number) => {
+    const { value, name } = e.target;
+    console.log({ name, value });
+    const result = isNumber ? value.replace(/\D/g, "") : value;
+    let newArr = channel.map((item: any, i: number) => {
+      if (index == i) {
+        return { ...item, [name]: value };
+      } else {
+        return item;
+      }
+    });
+    setChannel(newArr);
   };
 
   const onReset = () => {
@@ -424,7 +437,7 @@ export default function BForm() {
                           <div
                             style={{
                               display: "flex",
-                              gap: "30px",
+                              gap: "80px",
                             }}
                           >
                             <Row>
@@ -529,7 +542,7 @@ export default function BForm() {
                           <div
                             style={{
                               display: "flex",
-                              gap: "30px",
+                              gap: "80px",
                             }}
                           >
                             <Row>
@@ -634,7 +647,7 @@ export default function BForm() {
                           <div
                             style={{
                               display: "flex",
-                              gap: "30px",
+                              gap: "10px",
                             }}
                           >
                             <Row>
@@ -650,6 +663,8 @@ export default function BForm() {
                                   onChange(v.licenseName);
                                 }}
                               />
+                            </Row>
+                            <Row>
                               <ItemInput
                                 {...rest}
                                 value={v.licenseNumber}
@@ -662,6 +677,8 @@ export default function BForm() {
                                   onChange(v.licenseNumber);
                                 }}
                               />
+                            </Row>
+                            <Row>
                               <YearInput
                                 {...rest}
                                 placeholder="YYYY"
@@ -698,6 +715,63 @@ export default function BForm() {
             />
 
             <P>{errors.license?.message}</P>
+          </Grid>
+
+          {/* 채널 */}
+          <Grid item xs={12}>
+            <Label>채널*</Label>
+            <CustomDivdier />
+            <AddButton
+              type="button"
+              name={"channel"}
+              onClick={handleChannelAddClick}
+            >
+              +추가하기
+            </AddButton>
+            <Controller
+              control={control}
+              name="channel"
+              render={({ field: { value, onChange, ...rest } }) => {
+                return (
+                  <div>
+                    <AddItemSection>
+                      {channel.map((v: any, i: number) => {
+                        return (
+                          <div
+                            style={{
+                              display: "flex",
+                              gap: "30px",
+                            }}
+                          >
+                            <Row>
+                              <ItemInput
+                                style={{
+                                  width: "300px",
+                                }}
+                                {...rest}
+                                value={v.content}
+                                type="text"
+                                placeholder={
+                                  "ex) https://www.youtube.com/watch?v=test"
+                                }
+                                name="content"
+                                maxLength={30}
+                                onChange={(e: any) => {
+                                  handleChannelChange(e, i);
+                                  onChange(v.content);
+                                }}
+                              />
+                            </Row>
+                          </div>
+                        );
+                      })}
+                    </AddItemSection>
+                  </div>
+                );
+              }}
+            />
+
+            <P>{errors.channel?.message}</P>
           </Grid>
 
           <Footer>

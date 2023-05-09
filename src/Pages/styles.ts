@@ -163,6 +163,8 @@ export const MonthInput = styled.input`
 
 export const ItemInput = styled.input`
   border: none;
+  /* width: 30px; */
+
   /* width: 300px; */
   /* width: 30px; */
   &:focus {
