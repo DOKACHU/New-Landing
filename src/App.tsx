@@ -1,12 +1,12 @@
 import React from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
-import { AForm, BForm } from "./Pages";
+import { CenterForm, ProForm } from "./Pages";
 export default function App() {
   return (
     <Routes>
-      <Route path="/a" element={<AForm />} />
-      <Route path="/b" element={<BForm />} />
-      <Route path="*" element={<Navigate to="/a" />} />
+      <Route path="/center" element={<CenterForm />} />
+      <Route path="/pro" element={<ProForm />} />
+      <Route path="*" element={<Navigate to="/center" />} />
     </Routes>
   );
 }

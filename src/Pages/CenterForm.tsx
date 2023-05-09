@@ -1,25 +1,20 @@
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import {
-  Paper,
-  Box,
-  Grid,
-  Checkbox,
-  FormControlLabel,
-  Typography,
-} from "@material-ui/core";
+import { Grid, Checkbox, FormControlLabel, Typography } from "@mui/material";
 import { P } from "../styles";
 import { Fragment, useState } from "react";
 import { phoneNumber, ErrorEmptyCheck } from "../utils";
-
+import { Block } from "./styles";
 //
 const phoneRegExp =
-  /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
+  /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{2,4}?$/;
 const nameRegExp = /^[가-힣]{2,10}|[a-zA-Z]{2,10}\s[a-zA-Z]{2,10}$/;
 
 const schema = yup
   .object({
+    desc: yup.string().required("설명은 필수 항목 입니다."),
+
     phone: yup
       .string()
       .matches(phoneRegExp, "핸드폰 번호는 010-0000-0000 형태로 입력해주세요.")
@@ -73,9 +68,9 @@ const schema = yup
         "이미지는 필수 항목입니다.",
         (value: any) => value.length > 0
       )
-      .test("fileSize", "File Size is too large", (value: any) => {
-        return value?.length && value[0].size <= 5242880;
-      })
+      // .test("fileSize", "File Size is too large", (value: any) => {
+      //   return value?.length && value[0].size <= 5242880;
+      // })
       .test("fileType", "Unsupported File Format", (value: any) => {
         return (
           value?.length &&
@@ -87,7 +82,7 @@ const schema = yup
 
 type FormData = yup.InferType<typeof schema>;
 
-export default function BForm() {
+export default function CenterForm() {
   const [preview, setPreview] = useState<any>(null);
   const [selectedImage, setSelectedImage] = useState<any>(null);
   const [multipleImages, setMultipleImages] = useState<any>([]);
@@ -113,19 +108,41 @@ export default function BForm() {
     },
     resolver: yupResolver(schema),
   });
-  // const { onChange: onPhoneChange, ...rest } = register("phone");
+
+  console.log({ errors });
   const { onChange, ...params } = register("singlePhoto");
   const { onChange: onMultipleChange, ...multiParams } =
     register("multiplePhoto");
 
-  const changeMultipleFiles = (e: any) => {
-    if (e.target?.files) {
-      const imageArray = Array.from(e.target.files).map((file: any) =>
-        URL.createObjectURL(file)
-      ) as any;
+  // const changeMultipleFiles = (e: any) => {
+  //   if (e.target?.files) {
+  //     const imageArray = Array.from(e.target.files).map((file: any) =>
+  //       URL.createObjectURL(file)
+  //     ) as any;
 
-      setMultipleImages((prevImages: any) => prevImages.concat(imageArray));
-      setRawImages((prevRaws: any) => prevRaws.concat(e.target?.files[0]));
+  //     setMultipleImages((prevImages: any) => prevImages.concat(imageArray));
+  //     setRawImages((prevRaws: any) => prevRaws.concat(e.target?.files[0]));
+  //   }
+  // };
+
+  const changeMultipleFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const imageLists = e.target.files;
+      let imageUrlLists = [...multipleImages];
+
+      if (imageLists) {
+        for (let i = 0; i < imageLists.length; i++) {
+          const currentImageUrl = URL.createObjectURL(imageLists[i]) as any;
+          imageUrlLists.push(currentImageUrl as never);
+          setRawImages([...rawImages, imageLists[i]]);
+        }
+
+        if (imageUrlLists.length > 5) {
+          imageUrlLists = imageUrlLists.slice(0, 5);
+        }
+        setMultipleImages(imageUrlLists);
+        // fileMuitleInput.current.value = "";
+      }
     }
   };
 
@@ -164,12 +181,55 @@ export default function BForm() {
   };
 
   return (
-    <Fragment>
-      <h1>b</h1>
+    <Block>
+      <Typography variant="h4" fontWeight={600}>
+        병원 / 치료사 정보를 등록해주세요.
+      </Typography>
+
+      <Typography variant="subtitle1" gutterBottom fontWeight={600}>
+        도카츄는 병원 / 치료사들에게 편리한 환경을 제공하기 위해, 다음 정보를
+        리뷰하여 병원 등록을 승인하고 있습니다
+      </Typography>
+
       {/* <Paper elevation={1}>
         <Box sx={{ p: 2, border: "1px dashed grey" }}> */}
       <form onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={1}>
+          <Grid item xs={12}>
+            <Grid item xs={2}>
+              <p>커버 이미지 *</p>
+              <input
+                {...multiParams}
+                type="file"
+                accept="image/*"
+                id="multiple"
+                onChange={(e: any) => {
+                  changeMultipleFiles(e);
+                  onMultipleChange(e);
+                }}
+              />
+            </Grid>
+            <Grid item xs={10}>
+              {multipleImages?.map((image: any) => {
+                return (
+                  <img
+                    style={{
+                      width: "140px",
+                      height: "140px",
+                      objectFit: "contain",
+                      background: "lightgray",
+                      borderRadius: "8px",
+                    }}
+                    className="image"
+                    src={image}
+                    alt=""
+                    key={image}
+                  />
+                );
+              })}
+              <P>{errors.multiplePhoto?.message}</P>
+            </Grid>
+          </Grid>
           <Grid item xs={6}>
             <input {...register("name")} placeholder="이름" />
             <P>{errors.name?.message}</P>
@@ -187,6 +247,11 @@ export default function BForm() {
               }}
             />
             <P>{errors.phone?.message}</P>
+          </Grid>
+
+          <Grid item xs={6}>
+            <textarea {...register("desc")} placeholder="소개" />
+            <P>{errors.desc?.message}</P>
           </Grid>
 
           <Grid item xs={6}>
@@ -242,36 +307,6 @@ export default function BForm() {
           </Grid>
 
           {/* multiple */}
-          <Grid item xs={6}>
-            <p>다중</p>
-            <input
-              {...multiParams}
-              type="file"
-              accept="image/*"
-              id="multiple"
-              onChange={(e: any) => {
-                changeMultipleFiles(e);
-                onMultipleChange(e);
-              }}
-            />
-            {multipleImages?.map((image: any) => {
-              return (
-                <img
-                  style={{
-                    background: "#000",
-                    width: "140px",
-                    height: "140px",
-                    objectFit: "contain",
-                  }}
-                  className="image"
-                  src={image}
-                  alt=""
-                  key={image}
-                />
-              );
-            })}
-            <P>{errors.multiplePhoto?.message}</P>
-          </Grid>
 
           <Grid item xs={12}>
             <FormControlLabel
@@ -306,6 +341,6 @@ export default function BForm() {
       </form>
       {/* </Box>
       </Paper> */}
-    </Fragment>
+    </Block>
   );
 }

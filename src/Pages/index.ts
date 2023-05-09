@@ -1,2 +1,2 @@
-export { default as AForm } from "./AForm";
-export { default as BForm } from "./BForm";
+export { default as CenterForm } from "./CenterForm";
+export { default as ProForm } from "./ProForm";

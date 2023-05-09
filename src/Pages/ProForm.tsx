@@ -1,14 +1,7 @@
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import {
-  Paper,
-  Box,
-  Grid,
-  Checkbox,
-  FormControlLabel,
-  Typography,
-} from "@material-ui/core";
+import { Grid, Checkbox, FormControlLabel, Typography } from "@mui/material";
 import { P } from "../styles";
 import { Fragment, useState } from "react";
 import { phoneNumber, ErrorEmptyCheck } from "../utils";
@@ -20,8 +13,6 @@ const nameRegExp = /^[가-힣]{2,10}|[a-zA-Z]{2,10}\s[a-zA-Z]{2,10}$/;
 
 const schema = yup
   .object({
-    desc: yup.string().required("설명은 필수 항목 입니다."),
-
     phone: yup
       .string()
       .matches(phoneRegExp, "핸드폰 번호는 010-0000-0000 형태로 입력해주세요.")
@@ -89,7 +80,7 @@ const schema = yup
 
 type FormData = yup.InferType<typeof schema>;
 
-export default function AForm() {
+export default function BForm() {
   const [preview, setPreview] = useState<any>(null);
   const [selectedImage, setSelectedImage] = useState<any>(null);
   const [multipleImages, setMultipleImages] = useState<any>([]);
@@ -167,7 +158,7 @@ export default function AForm() {
 
   return (
     <Fragment>
-      <h1>a</h1>
+      <h1>b</h1>
       {/* <Paper elevation={1}>
         <Box sx={{ p: 2, border: "1px dashed grey" }}> */}
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -189,11 +180,6 @@ export default function AForm() {
               }}
             />
             <P>{errors.phone?.message}</P>
-          </Grid>
-
-          <Grid item xs={6}>
-            <textarea {...register("desc")} placeholder="소개" />
-            <P>{errors.desc?.message}</P>
           </Grid>
 
           <Grid item xs={6}>
