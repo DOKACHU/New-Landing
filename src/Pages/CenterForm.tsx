@@ -20,6 +20,8 @@ import {
   ArrowImg,
   SelectBlock,
   TextArea,
+  Footer,
+  SubmitButton,
 } from "./styles";
 import { Select } from "../components";
 import { schema } from "./constants";
@@ -132,7 +134,13 @@ export default function CenterForm({
 
   return (
     <Block>
-      <Typography variant="h4" fontWeight={600}>
+      <Typography
+        style={{
+          marginTop: "56px",
+        }}
+        variant="h4"
+        fontWeight={600}
+      >
         병원 / 치료사 정보를 등록해주세요.
       </Typography>
 
@@ -373,39 +381,45 @@ export default function CenterForm({
             <P>{errors.desc?.message}</P>
           </Grid>
 
-          <Grid item xs={12}>
-            <FormControlLabel
-              control={
-                <Controller
-                  control={control}
-                  name="acceptTerms"
-                  defaultValue={false}
-                  render={({ field: { onChange } }) => (
-                    <Checkbox
-                      color="primary"
-                      onChange={(e) => onChange(e.target.checked)}
-                    />
-                  )}
-                />
-              }
-              label={
-                <Typography color={errors.acceptTerms ? "error" : "inherit"}>
-                  이용약관 및 도카추 회원 가입에 동의합니다.
-                </Typography>
-              }
-            />
-          </Grid>
+          <Footer xs={12}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <FormControlLabel
+                control={
+                  <Controller
+                    control={control}
+                    name="acceptTerms"
+                    defaultValue={false}
+                    render={({ field: { onChange } }) => (
+                      <Checkbox
+                        color="primary"
+                        onChange={(e) => onChange(e.target.checked)}
+                      />
+                    )}
+                  />
+                }
+                label={
+                  <Typography color={errors.acceptTerms ? "error" : "inherit"}>
+                    이용약관 및 도카추 회원 가입에 동의합니다.
+                  </Typography>
+                }
+              />
+            </div>
+            <SubmitButton type="submit">보내기</SubmitButton>
+          </Footer>
+          <Grid item xs={12}></Grid>
         </Grid>
-        <button type="submit">보내기</button>
-        <button type="button" onClick={onSave}>
+        {/* <button type="button" onClick={onSave}>
           임시 저장
         </button>
         <button type="button" onClick={onReset}>
           초기화
-        </button>
+        </button> */}
       </form>
-      {/* </Box>
-      </Paper> */}
     </Block>
   );
 }

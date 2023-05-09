@@ -1,9 +1,8 @@
 import styled from "styled-components";
+import { Grid } from "@mui/material";
 
 export const Block = styled.div`
-  border: 1px solid red;
-  height: 100vh;
-  /* background-color: lightgray; */
+  min-height: calc(100vh- 56px);
   max-width: 1200px;
   margin: 0 auto;
 `;
@@ -65,5 +64,36 @@ export const TextArea = styled.textarea`
 
   &:focus {
     background-color: #f4f4f4;
+  }
+`;
+
+export const Footer = styled(Grid)`
+  border: 1px solid #e5e5e5;
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  padding: 10px 80px;
+  background-color: #fff;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+export const SubmitButton = styled.button`
+  padding: 17px 142px;
+  color: #fff;
+  background-color: #000;
+  border: none;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+
+  &:hover {
+    background-color: #e4e4e4;
+  }
+
+  &:disabled {
+    background-color: lightgray;
   }
 `;
