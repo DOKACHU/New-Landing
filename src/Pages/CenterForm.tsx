@@ -3,82 +3,20 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Grid, Checkbox, FormControlLabel, Typography } from "@mui/material";
 import { P } from "../styles";
-import { Fragment, useState } from "react";
+import { useState } from "react";
 import { phoneNumber, ErrorEmptyCheck } from "../utils";
-import { Block } from "./styles";
-//
-const phoneRegExp =
-  /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{2,4}?$/;
-const nameRegExp = /^[가-힣]{2,10}|[a-zA-Z]{2,10}\s[a-zA-Z]{2,10}$/;
-
-const schema = yup
-  .object({
-    desc: yup.string().required("설명은 필수 항목 입니다."),
-
-    phone: yup
-      .string()
-      .matches(phoneRegExp, "핸드폰 번호는 010-0000-0000 형태로 입력해주세요.")
-      .required("핸드폰 번호는 필수 항목 입니다."),
-
-    name: yup
-      .string()
-      .matches(nameRegExp, "정확한 한글 또는 영어로 이름을 입력해주세요.")
-      .min(2, "이름은 2글자 이상 써주세요.")
-      .max(9, "이름은 10자 이내로 써주세요.")
-      .required("이름을 필수 항목 입니다."),
-
-    years: yup
-      .string()
-      .min(1, "연도는 1자리 이상 써주세요.")
-      .max(4, "연도는 4자리 이하로 써주세요.")
-      .required("연도는 필수 항목 입니다."),
-
-    month: yup
-      .string()
-      .min(1, "월 입력은 1자리 이상 써주세요.")
-      .max(2, "월 입력은 2자리 이하로 써주세요.")
-      .required("월 입력은 필수 항목 입니다."),
-
-    age: yup
-      .number()
-      .min(1, "나이는 1이상 써주세요.")
-      .max(99, "나이는 99이하로 써주세요.")
-      .positive("양수만 허용됩니다.")
-      .typeError("나이는 숫자만 가능합니다.")
-      .required("나이는 필수 항목 입니다."), // number 에러 시, typeError 로 작성
-
-    email: yup
-      .string()
-      .required("이메일은 필수 항목 입니다.")
-      .email("이메일 형식이 아닙니다."),
-    acceptTerms: yup.bool().oneOf([true], "Accept Terms is required"),
-  })
-  .shape({
-    multiplePhoto: yup
-      .mixed()
-      .test(
-        "required",
-        "다중 이미지는 필수 항목입니다.",
-        (value: any) => value.length > 0
-      ),
-    singlePhoto: yup
-      .mixed()
-      .test(
-        "required",
-        "이미지는 필수 항목입니다.",
-        (value: any) => value.length > 0
-      )
-      // .test("fileSize", "File Size is too large", (value: any) => {
-      //   return value?.length && value[0].size <= 5242880;
-      // })
-      .test("fileType", "Unsupported File Format", (value: any) => {
-        return (
-          value?.length &&
-          ["image/jpeg", "image/png", "image/jpg"].includes(value[0].type)
-        );
-      }),
-  })
-  .required();
+import {
+  Block,
+  Label,
+  Img,
+  Input,
+  ArrowImg,
+  SelectBlock,
+  TextArea,
+} from "./styles";
+import { Select } from "../components";
+import { schema } from "./constants";
+import arrow from "./arrow.png";
 
 type FormData = yup.InferType<typeof schema>;
 
@@ -109,21 +47,9 @@ export default function CenterForm() {
     resolver: yupResolver(schema),
   });
 
-  console.log({ errors });
   const { onChange, ...params } = register("singlePhoto");
   const { onChange: onMultipleChange, ...multiParams } =
     register("multiplePhoto");
-
-  // const changeMultipleFiles = (e: any) => {
-  //   if (e.target?.files) {
-  //     const imageArray = Array.from(e.target.files).map((file: any) =>
-  //       URL.createObjectURL(file)
-  //     ) as any;
-
-  //     setMultipleImages((prevImages: any) => prevImages.concat(imageArray));
-  //     setRawImages((prevRaws: any) => prevRaws.concat(e.target?.files[0]));
-  //   }
-  // };
 
   const changeMultipleFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -191,13 +117,11 @@ export default function CenterForm() {
         리뷰하여 병원 등록을 승인하고 있습니다
       </Typography>
 
-      {/* <Paper elevation={1}>
-        <Box sx={{ p: 2, border: "1px dashed grey" }}> */}
       <form onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={1}>
           <Grid item xs={12}>
             <Grid item xs={2}>
-              <p>커버 이미지 *</p>
+              <Label>커버 이미지 *</Label>
               <input
                 {...multiParams}
                 type="file"
@@ -211,55 +135,92 @@ export default function CenterForm() {
             </Grid>
             <Grid item xs={10}>
               {multipleImages?.map((image: any) => {
-                return (
-                  <img
-                    style={{
-                      width: "140px",
-                      height: "140px",
-                      objectFit: "contain",
-                      background: "lightgray",
-                      borderRadius: "8px",
-                    }}
-                    className="image"
-                    src={image}
-                    alt=""
-                    key={image}
-                  />
-                );
+                return <Img className="image" src={image} alt="" key={image} />;
               })}
               <P>{errors.multiplePhoto?.message}</P>
             </Grid>
           </Grid>
+
+          {/*  */}
           <Grid item xs={6}>
-            <input {...register("name")} placeholder="이름" />
+            <Label>병원 이름 *</Label>
+            <Input {...register("name")} placeholder="이름" />
             <P>{errors.name?.message}</P>
           </Grid>
 
           <Grid item xs={6}>
+            <Label>지역*</Label>
+            <Controller
+              name="location"
+              control={control}
+              render={({ field }) => (
+                <SelectBlock>
+                  <Select
+                    {...field}
+                    defaultValue={{ value: "00", label: "서울" }}
+                    options={[
+                      { value: "00", label: "서울" },
+                      { value: "01", label: "인천" },
+                      { value: "02", label: "대구" },
+                      { value: "03", label: "부산" },
+                      { value: "04", label: "광주" },
+                    ]}
+                  />
+                  <ArrowImg src={arrow} alt="" />
+                </SelectBlock>
+              )}
+            />
+          </Grid>
+
+          {/*  */}
+          <Grid item xs={6}>
+            <Label>사업자 등록번호 *</Label>
+            <Input {...register("bizzNum")} placeholder="'-' 제외하고 10자리" />
+            <P>{errors.bizzNum?.message}</P>
+          </Grid>
+
+          {/*  */}
+          <Grid item xs={6}>
+            <Label>진료항목*</Label>
+            <Controller
+              name="subject"
+              control={control}
+              render={({ field }) => (
+                <SelectBlock>
+                  <Select
+                    {...field}
+                    defaultValue={{ value: "00", label: "도수 치료" }}
+                    options={[
+                      { value: "00", label: "도수 치료" },
+                      { value: "01", label: "카이로 프택틱" },
+                      { value: "02", label: "추나요법" },
+                    ]}
+                  />
+                  <ArrowImg src={arrow} alt="" />
+                </SelectBlock>
+              )}
+            />
+          </Grid>
+
+          <Grid item xs={12}>
+            <Label>병원 소개(3000자 제한)</Label>
             <Controller
               control={control}
-              name="phone"
-              render={({ field: { value, ...rest } }) => {
-                const result = phoneNumber(value);
+              name="desc"
+              render={({ field }) => {
                 return (
-                  <input value={result} {...rest} placeholder="핸드폰 번호" />
+                  <TextArea
+                    {...field}
+                    rows={8}
+                    placeholder="병원 소개를 적어주세요."
+                  />
                 );
               }}
             />
-            <P>{errors.phone?.message}</P>
-          </Grid>
-
-          <Grid item xs={6}>
-            <textarea {...register("desc")} placeholder="소개" />
             <P>{errors.desc?.message}</P>
           </Grid>
 
-          <Grid item xs={6}>
-            <input {...register("age")} placeholder="나이" />
-            <P>{errors.age?.message}</P>
-          </Grid>
-
-          <Grid item xs={6}>
+          {/* <Grid item xs={6}>
             <input {...register("years")} placeholder="YYYY" />
             <P>{errors.years?.message}</P>
           </Grid>
@@ -267,16 +228,36 @@ export default function CenterForm() {
           <Grid item xs={6}>
             <input {...register("month")} placeholder="MM" />
             <P>{errors.month?.message}</P>
+          </Grid> */}
+          <Grid item xs={6}>
+            <Label>담당자 연락처 *</Label>
+            <Controller
+              control={control}
+              name="phone"
+              render={({ field: { value, ...rest } }) => {
+                const result = phoneNumber(value);
+                return (
+                  <Input value={result} {...rest} placeholder="핸드폰 번호" />
+                );
+              }}
+            />
+            <P>{errors.phone?.message}</P>
           </Grid>
 
           <Grid item xs={6}>
-            <input {...register("email")} placeholder="이메일" />
+            <Label>정보 수신 이메일 *</Label>
+            <Input {...register("email")} placeholder="ex) user@gmail.com" />
             <P>{errors.email?.message}</P>
           </Grid>
 
+          <Grid item xs={6}>
+            <Label>치료사 수 *</Label>
+            <Input {...register("proNumber")} placeholder="치료사 수" />
+            <P>{errors.proNumber?.message}</P>
+          </Grid>
           {/* single */}
           <Grid item xs={6}>
-            <p>싱글</p>
+            <p>사업자 이미지 등록*</p>
             <input
               {...params}
               type="file"
@@ -289,24 +270,24 @@ export default function CenterForm() {
                 onChange(event);
               }}
             />
-            {preview && (
-              <img
-                style={{
-                  background: "#000",
-                  width: "140px",
-                  height: "140px",
-                  objectFit: "contain",
-                }}
-                className="image"
-                src={preview}
-                alt=""
-              />
-            )}
+            <Grid item xs={6}>
+              {preview && <Img className="image" src={preview} alt="" />}
+            </Grid>
 
             <P>{errors.singlePhoto?.message}</P>
           </Grid>
 
           {/* multiple */}
+
+          <Grid item xs={12}>
+            <Label>이용약관</Label>
+            <TextArea
+              {...register("desc")}
+              rows={8}
+              placeholder="병원 소개를 적어주세요."
+            />
+            <P>{errors.desc?.message}</P>
+          </Grid>
 
           <Grid item xs={12}>
             <FormControlLabel
@@ -325,7 +306,7 @@ export default function CenterForm() {
               }
               label={
                 <Typography color={errors.acceptTerms ? "error" : "inherit"}>
-                  I have read and agree to the Terms *
+                  이용약관 및 도카추 회원 가입에 동의합니다.
                 </Typography>
               }
             />
