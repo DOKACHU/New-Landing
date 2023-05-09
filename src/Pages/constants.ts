@@ -13,6 +13,9 @@ export const schema = yup
       .max(3000, "병원소개는 3000자리 이하로 써주세요.")
       .required("병원소개는 필수 항목 입니다."),
 
+    address1: yup.string().required("주소는 필수 항목 입니다."),
+    address2: yup.string().required("상세주소는 필수 항목 입니다."),
+
     subject: yup.string().required("진료항목은 필수 항목 입니다."),
     location: yup.string().required("지역은 필수 항목 입니다."),
 
@@ -47,7 +50,7 @@ export const schema = yup
     proNumber: yup
       .number()
       .min(1, "치료사 수는 1이상 써주세요.")
-      .max(99, "치료사 수는 99이하로 써주세요.")
+      .max(999, "치료사 수는 999이하로 써주세요.")
       .positive("양수만 허용됩니다.")
       .typeError("치료사 수는 숫자만 가능합니다.")
       .required("치료사 수는 필수 항목 입니다."), // number 에러 시, typeError 로 작성

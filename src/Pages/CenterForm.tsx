@@ -1,7 +1,14 @@
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { Grid, Checkbox, FormControlLabel, Typography } from "@mui/material";
+import {
+  Grid,
+  Checkbox,
+  FormControlLabel,
+  Typography,
+  Modal,
+  Box,
+} from "@mui/material";
 import { P } from "../styles";
 import { useState } from "react";
 import { phoneNumber, ErrorEmptyCheck } from "../utils";
@@ -17,10 +24,27 @@ import {
 import { Select } from "../components";
 import { schema } from "./constants";
 import arrow from "./arrow.png";
+import DaumPostcode from "react-daum-postcode";
 
 type FormData = yup.InferType<typeof schema>;
-
-export default function CenterForm() {
+const style = {
+  position: "absolute" as const,
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
+export default function CenterForm({
+  openPostcode,
+  handle,
+  inputRef,
+  setOpenPostcode,
+  address,
+}: any) {
   const [preview, setPreview] = useState<any>(null);
   const [selectedImage, setSelectedImage] = useState<any>(null);
   const [multipleImages, setMultipleImages] = useState<any>([]);
@@ -172,6 +196,55 @@ export default function CenterForm() {
             />
           </Grid>
 
+          <Grid item xs={6}>
+            <Controller
+              name="address1"
+              control={control}
+              render={({ field }) => (
+                <Grid item xs={12}>
+                  <Label>대표주소*</Label>
+                  <Input
+                    {...field}
+                    value={address}
+                    // {...register("address1")}
+                    placeholder="대표 주소 입력"
+                    ref={inputRef}
+                    onClick={() => {
+                      handle.clickButton();
+                    }}
+                  />
+                  <P>{errors.address1?.message}</P>
+                </Grid>
+              )}
+            />
+            <Modal open={openPostcode} onClose={() => setOpenPostcode(false)}>
+              <Box sx={style}>
+                <DaumPostcode
+                  onComplete={handle.selectAddress}
+                  autoClose={false}
+                  defaultQuery="" //  판교역로 235
+                />
+              </Box>
+            </Modal>
+          </Grid>
+
+          <Grid item xs={6}>
+            <Controller
+              name="address2"
+              control={control}
+              render={({ field }) => (
+                <Grid item xs={12}>
+                  <Label>대표주소*</Label>
+                  <Input
+                    {...register("address2")}
+                    placeholder="상세 주소 입력"
+                  />
+                  <P>{errors.address2?.message}</P>
+                </Grid>
+              )}
+            />
+          </Grid>
+
           {/*  */}
           <Grid item xs={6}>
             <Label>사업자 등록번호 *</Label>
@@ -202,21 +275,61 @@ export default function CenterForm() {
             />
           </Grid>
 
+          {/* 주소 */}
+          <Grid item xs={6}>
+            <Label>치료사 수 *</Label>
+            <Input {...register("proNumber")} placeholder="치료사 수" />
+            <P>{errors.proNumber?.message}</P>
+          </Grid>
+          {/* single */}
+          <Grid item xs={6}>
+            <p>사업자 이미지 등록*</p>
+            <input
+              {...params}
+              type="file"
+              accept="image/*"
+              id="single"
+              onChange={(event: any) => {
+                const file = event?.target?.files[0];
+                setSelectedImage(file);
+                setPreview(URL.createObjectURL(file));
+                onChange(event);
+              }}
+            />
+            <Grid item xs={6}>
+              {preview && <Img className="image" src={preview} alt="" />}
+            </Grid>
+
+            <P>{errors.singlePhoto?.message}</P>
+          </Grid>
+
           <Grid item xs={12}>
             <Label>병원 소개(3000자 제한)</Label>
             <Controller
               control={control}
               name="desc"
-              render={({ field }) => {
+              render={({ field: { value, ...rest } }) => {
                 return (
-                  <TextArea
-                    {...field}
-                    rows={8}
-                    placeholder="병원 소개를 적어주세요."
-                  />
+                  <>
+                    <TextArea
+                      value={value}
+                      {...rest}
+                      rows={8}
+                      placeholder="병원 소개를 적어주세요."
+                    />
+                    <div
+                      style={{
+                        textAlign: "right",
+                        width: "100%",
+                      }}
+                    >
+                      <span>{`${value?.length || 0} / 3000`}</span>
+                    </div>{" "}
+                  </>
                 );
               }}
             />
+
             <P>{errors.desc?.message}</P>
           </Grid>
 
@@ -249,35 +362,6 @@ export default function CenterForm() {
             <Input {...register("email")} placeholder="ex) user@gmail.com" />
             <P>{errors.email?.message}</P>
           </Grid>
-
-          <Grid item xs={6}>
-            <Label>치료사 수 *</Label>
-            <Input {...register("proNumber")} placeholder="치료사 수" />
-            <P>{errors.proNumber?.message}</P>
-          </Grid>
-          {/* single */}
-          <Grid item xs={6}>
-            <p>사업자 이미지 등록*</p>
-            <input
-              {...params}
-              type="file"
-              accept="image/*"
-              id="single"
-              onChange={(event: any) => {
-                const file = event?.target?.files[0];
-                setSelectedImage(file);
-                setPreview(URL.createObjectURL(file));
-                onChange(event);
-              }}
-            />
-            <Grid item xs={6}>
-              {preview && <Img className="image" src={preview} alt="" />}
-            </Grid>
-
-            <P>{errors.singlePhoto?.message}</P>
-          </Grid>
-
-          {/* multiple */}
 
           <Grid item xs={12}>
             <Label>이용약관</Label>
