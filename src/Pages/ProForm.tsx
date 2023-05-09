@@ -26,6 +26,7 @@ import {
 } from "./styles";
 import { Select } from "../components";
 import arrow from "./arrow.png";
+import { useCreatePro } from "../hooks";
 
 type FormData = yup.InferType<typeof schema>;
 
@@ -34,14 +35,16 @@ export default function BForm() {
   const [selectedImage, setSelectedImage] = useState<any>(null);
   const [multipleImages, setMultipleImages] = useState<any>([]);
   const [rawImages, setRawImages] = useState<any>([]);
-  const isNumber = [
-    "startYear",
-    "startMonth",
-    "endYear",
-    "endMonth",
-    "registerYear",
-    "registerMonth",
-  ];
+  const { mutate: createPro } = useCreatePro();
+
+  // const isNumber = [
+  //   "startYear",
+  //   "startMonth",
+  //   "endYear",
+  //   "endMonth",
+  //   "registerYear",
+  //   "registerMonth",
+  // ];
   const [career, setCareer] = useState([
     {
       startYear: "",
@@ -127,8 +130,71 @@ export default function BForm() {
   const onSubmit = (data: FormData) => {
     const isSubmit = ErrorEmptyCheck(errors);
     if (isSubmit) {
-      console.log({ selectedImage, multipleImages, rawImages });
-      console.log(JSON.stringify(data, null, 2));
+      const { name, location, subject, desc, gender } = data as any;
+
+      const formData = new FormData(); // 새로운 폼 객체 생성
+      for (let i = 0; i < rawImages.length; i++) {
+        formData.append("proImages", rawImages[i]);
+      }
+      formData.append("licenseImage", selectedImage); // <input name="item" value="hi"> 와 같다.
+      formData.append("proName", name);
+      formData.append("gender", gender.label);
+
+      formData.append("city", location.label);
+      formData.append("therapyCategory", subject.label);
+      formData.append("description", desc);
+
+      for (let i = 0; i < career.length; i++) {
+        formData.append(`careers[${i}][centerName]`, career[i].content);
+        formData.append(
+          `careers[${i}][startDate]`,
+          `${career[i].startYear}-${career[i].startMonth}`
+        );
+        formData.append(
+          `careers[${i}][endDate]`,
+          `${career[i].endYear}-${career[i].endMonth}`
+        );
+      }
+
+      for (let i = 0; i < school.length; i++) {
+        formData.append(`educations[${i}][schoolName]`, school[i].content);
+        formData.append(
+          `educations[${i}][startDate]`,
+          `${school[i].startYear}-${career[i].startMonth}`
+        );
+        formData.append(
+          `educations[${i}][endDate]`,
+          `${school[i].endYear}-${career[i].endMonth}`
+        );
+      }
+
+      for (let i = 0; i < license.length; i++) {
+        formData.append(`licenses[${i}][licenseName]`, license[i].licenseName);
+        formData.append(
+          `licenses[${i}][licenseNumber]`,
+          license[i].licenseNumber
+        );
+        formData.append(
+          `licenses[${i}][issueDate]`,
+          `${license[i].registerYear}-${license[i].registerMonth}`
+        );
+      }
+
+      for (let i = 0; i < channel.length; i++) {
+        formData.append(`channels[${i}]`, channel[i].content);
+      }
+
+      createPro(formData, {
+        onError: (e) => {
+          console.log({ e });
+        },
+        onSuccess: (res) => {
+          onReset();
+          alert("프로 입점 양식 등록 완료 ");
+        },
+      });
+      // console.log({ selectedImage, multipleImages, rawImages });
+      // console.log(JSON.stringify(data, null, 2));
     }
   };
 
