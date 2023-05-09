@@ -387,39 +387,39 @@ export default function CenterForm({
         <button type="button" onClick={onReset}>
           초기화
         </button> */}
+        <Footer>
+          <div
+            style={{
+              width: "1200px",
+              margin: "0 auto",
+              display: "flex",
+              justifyContent: "space-between",
+            }}
+          >
+            <FormControlLabel
+              control={
+                <Controller
+                  control={control}
+                  name="acceptTerms"
+                  defaultValue={false}
+                  render={({ field: { onChange } }) => (
+                    <Checkbox
+                      color="primary"
+                      onChange={(e) => onChange(e.target.checked)}
+                    />
+                  )}
+                />
+              }
+              label={
+                <Typography color={errors.acceptTerms ? "error" : "inherit"}>
+                  이용약관 및 도카추 회원 가입에 동의합니다.
+                </Typography>
+              }
+            />
+            <SubmitButton type="submit">보내기</SubmitButton>
+          </div>
+        </Footer>
       </form>
-      <Footer>
-        <div
-          style={{
-            width: "1200px",
-            margin: "0 auto",
-            display: "flex",
-            justifyContent: "space-between",
-          }}
-        >
-          <FormControlLabel
-            control={
-              <Controller
-                control={control}
-                name="acceptTerms"
-                defaultValue={false}
-                render={({ field: { onChange } }) => (
-                  <Checkbox
-                    color="primary"
-                    onChange={(e) => onChange(e.target.checked)}
-                  />
-                )}
-              />
-            }
-            label={
-              <Typography color={errors.acceptTerms ? "error" : "inherit"}>
-                이용약관 및 도카추 회원 가입에 동의합니다.
-              </Typography>
-            }
-          />
-          <SubmitButton type="submit">보내기</SubmitButton>
-        </div>
-      </Footer>
     </Block>
   );
 }
