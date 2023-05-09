@@ -11,15 +11,17 @@ import {
 } from "@material-ui/core";
 import { P } from "./styles";
 import { Fragment, useState } from "react";
-import { phoneNumber } from "./utils";
+import { phoneNumber, ErrorEmptyCheck } from "./utils";
+
+//
+const phoneRegExp =
+  /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
+
 const schema = yup
   .object({
     phone: yup
       .string()
-      .matches(
-        /^01([0|1|6|7|8|9])-?([0-9]{3,4})-?([0-9]{4})$/,
-        "핸드폰 번호는 010-0000-0000 형태로 입력해주세요."
-      )
+      .matches(phoneRegExp, "핸드폰 번호는 010-0000-0000 형태로 입력해주세요.")
       .required("핸드폰 번호는 필수 항목 입니다."),
 
     name: yup
@@ -75,21 +77,29 @@ const schema = yup
 type FormData = yup.InferType<typeof schema>;
 
 export default function App() {
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [preview, setPreview] = useState<any>(null);
+  const [selectedImage, setSelectedImage] = useState<any>(null);
   const [multipleImages, setMultipleImages] = useState<any>([]);
   const [rawImages, setRawImages] = useState<any>([]);
+
+  const getLocalStorage =
+    localStorage.getItem("temp") === undefined
+      ? null
+      : JSON.parse(localStorage.getItem("temp") || "{}");
 
   const {
     control,
     register,
     handleSubmit,
+    watch,
+    reset,
     formState: { errors },
   } = useForm<FormData>({
-    // defaultValues: {
-    //   name: "김민수",
-    //   age: 33,
-    //   email: "test@naver.com",
-    // },
+    defaultValues: {
+      name: getLocalStorage.name,
+      // age: 33,
+      // email: "test@naver.com",
+    },
     resolver: yupResolver(schema),
   });
   // const { onChange: onPhoneChange, ...rest } = register("phone");
@@ -110,8 +120,27 @@ export default function App() {
 
   // submit
   const onSubmit = (data: FormData) => {
-    console.log({ selectedImage, multipleImages, rawImages });
-    console.log(JSON.stringify(data, null, 2));
+    const isSubmit = ErrorEmptyCheck(errors);
+    if (isSubmit) {
+      console.log({ selectedImage, multipleImages, rawImages });
+      console.log(JSON.stringify(data, null, 2));
+    }
+  };
+
+  const onReset = () => {
+    reset();
+    setMultipleImages([]);
+    setRawImages([]);
+    setSelectedImage(null);
+    localStorage.removeItem("temp");
+  };
+
+  const onSave = () => {
+    const saveObj = {
+      name: watch("name"),
+      phone: watch("phone"),
+    };
+    localStorage.setItem("temp", JSON.stringify(saveObj));
   };
 
   return (
@@ -130,7 +159,6 @@ export default function App() {
                   control={control}
                   name="phone"
                   render={({ field: { value, ...rest } }) => {
-                    console.log({ value });
                     const result = phoneNumber(value);
                     return (
                       <input
@@ -141,8 +169,6 @@ export default function App() {
                     );
                   }}
                 />
-
-                {/* <input {...register("phone")} placeholder="핸드폰 번호" /> */}
                 <P>{errors.phone?.message}</P>
               </Grid>
 
@@ -158,21 +184,39 @@ export default function App() {
 
               {/* single */}
               <Grid item xs={6}>
+                <p>싱글</p>
                 <input
                   {...params}
                   type="file"
                   accept="image/*"
                   id="single"
                   onChange={(event: any) => {
-                    setSelectedImage(event?.target?.files[0]);
+                    const file = event?.target?.files[0];
+                    setSelectedImage(file);
+                    setPreview(URL.createObjectURL(file));
                     onChange(event);
                   }}
                 />
+                {preview && (
+                  <img
+                    style={{
+                      background: "#000",
+                      width: "140px",
+                      height: "140px",
+                      objectFit: "contain",
+                    }}
+                    className="image"
+                    src={preview}
+                    alt=""
+                  />
+                )}
+
                 <P>{errors.singlePhoto?.message}</P>
               </Grid>
 
               {/* multiple */}
               <Grid item xs={6}>
+                <p>다중</p>
                 <input
                   {...multiParams}
                   type="file"
@@ -228,7 +272,12 @@ export default function App() {
               </Grid>
             </Grid>
             <button type="submit">보내기</button>
-            <button type="button">임시 저장</button>
+            <button type="button" onClick={onSave}>
+              임시 저장
+            </button>
+            <button type="button" onClick={onReset}>
+              초기화
+            </button>
           </form>
         </Box>
       </Paper>

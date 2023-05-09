@@ -35,3 +35,7 @@ export function phoneNumber(value: any) {
 
   return result.filter((val) => val).join("-");
 }
+
+export function ErrorEmptyCheck(value: any) {
+  return Object.keys(value).length === 0;
+}
