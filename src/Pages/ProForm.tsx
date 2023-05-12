@@ -5,7 +5,7 @@ import { Grid, Typography } from "@mui/material";
 import { P } from "../styles";
 import { useState } from "react";
 import { ErrorEmptyCheck } from "../utils";
-import { schema } from "./constants";
+import { proSchema } from "./constants";
 import {
   Block,
   Label,
@@ -28,7 +28,7 @@ import { Select } from "../components";
 import arrow from "./arrow.png";
 import { useCreatePro } from "../hooks";
 
-type FormData = yup.InferType<typeof schema>;
+type FormData = yup.InferType<typeof proSchema>;
 
 export default function BForm() {
   const [preview, setPreview] = useState<any>(null);
@@ -95,10 +95,11 @@ export default function BForm() {
   } = useForm<FormData>({
     defaultValues: {
       name: getLocalStorage.name,
-      // age: 33,
-      // email: "test@naver.com",
+      subject: { value: "00", label: "도수 치료" },
+      gender: { value: "male", label: "남자" },
+      location: { value: "00", label: "서울" },
     },
-    resolver: yupResolver(schema),
+    resolver: yupResolver(proSchema),
   });
   // const { onChange: onPhoneChange, ...rest } = register("phone");
   const { onChange, ...params } = register("singlePhoto");
@@ -125,77 +126,79 @@ export default function BForm() {
       }
     }
   };
-
+  console.log({ errors });
   // submit
   const onSubmit = (data: FormData) => {
-    const isSubmit = ErrorEmptyCheck(errors);
-    if (isSubmit) {
-      const { name, location, subject, desc, gender } = data as any;
+    // const isSubmit = ErrorEmptyCheck(errors);
+    // if (isSubmit) {    console.log({ data });
 
-      const formData = new FormData(); // 새로운 폼 객체 생성
-      for (let i = 0; i < rawImages.length; i++) {
-        formData.append("proImages", rawImages[i]);
-      }
-      formData.append("licenseImage", selectedImage); // <input name="item" value="hi"> 와 같다.
-      formData.append("proName", name);
-      formData.append("gender", gender.label);
+    const { name, location, subject, desc, gender } = data as any;
+    console.log({ location, subject });
 
-      formData.append("city", location.label);
-      formData.append("therapyCategory", subject.label);
-      formData.append("description", desc);
-
-      for (let i = 0; i < career.length; i++) {
-        formData.append(`careers[${i}][centerName]`, career[i].content);
-        formData.append(
-          `careers[${i}][startDate]`,
-          `${career[i].startYear}-${career[i].startMonth}`
-        );
-        formData.append(
-          `careers[${i}][endDate]`,
-          `${career[i].endYear}-${career[i].endMonth}`
-        );
-      }
-
-      for (let i = 0; i < school.length; i++) {
-        formData.append(`educations[${i}][schoolName]`, school[i].content);
-        formData.append(
-          `educations[${i}][startDate]`,
-          `${school[i].startYear}-${career[i].startMonth}`
-        );
-        formData.append(
-          `educations[${i}][endDate]`,
-          `${school[i].endYear}-${career[i].endMonth}`
-        );
-      }
-
-      for (let i = 0; i < license.length; i++) {
-        formData.append(`licenses[${i}][licenseName]`, license[i].licenseName);
-        formData.append(
-          `licenses[${i}][licenseNumber]`,
-          license[i].licenseNumber
-        );
-        formData.append(
-          `licenses[${i}][issueDate]`,
-          `${license[i].registerYear}-${license[i].registerMonth}`
-        );
-      }
-
-      for (let i = 0; i < channel.length; i++) {
-        formData.append(`channels[${i}]`, channel[i].content);
-      }
-
-      createPro(formData, {
-        onError: (e) => {
-          console.log({ e });
-        },
-        onSuccess: (res) => {
-          onReset();
-          alert("프로 입점 양식 등록 완료 ");
-        },
-      });
-      // console.log({ selectedImage, multipleImages, rawImages });
-      // console.log(JSON.stringify(data, null, 2));
+    const formData = new FormData(); // 새로운 폼 객체 생성
+    for (let i = 0; i < rawImages.length; i++) {
+      formData.append("proImages", rawImages[i]);
     }
+    formData.append("licenseImage", selectedImage); // <input name="item" value="hi"> 와 같다.
+    formData.append("proName", name);
+    formData.append("gender", gender?.label);
+
+    formData.append("city", location?.label);
+    formData.append("therapyCategory", subject?.label);
+    formData.append("description", desc);
+
+    for (let i = 0; i < career.length; i++) {
+      formData.append(`careers[${i}][centerName]`, career[i].content);
+      formData.append(
+        `careers[${i}][startDate]`,
+        `${career[i].startYear}-${career[i].startMonth}`
+      );
+      formData.append(
+        `careers[${i}][endDate]`,
+        `${career[i].endYear}-${career[i].endMonth}`
+      );
+    }
+
+    for (let i = 0; i < school.length; i++) {
+      formData.append(`educations[${i}][schoolName]`, school[i].content);
+      formData.append(
+        `educations[${i}][startDate]`,
+        `${school[i].startYear}-${career[i].startMonth}`
+      );
+      formData.append(
+        `educations[${i}][endDate]`,
+        `${school[i].endYear}-${career[i].endMonth}`
+      );
+    }
+
+    for (let i = 0; i < license.length; i++) {
+      formData.append(`licenses[${i}][licenseName]`, license[i].licenseName);
+      formData.append(
+        `licenses[${i}][licenseNumber]`,
+        license[i].licenseNumber
+      );
+      formData.append(
+        `licenses[${i}][issueDate]`,
+        `${license[i].registerYear}-${license[i].registerMonth}`
+      );
+    }
+
+    for (let i = 0; i < channel.length; i++) {
+      formData.append(`channels[${i}]`, channel[i].content);
+    }
+
+    createPro(formData, {
+      onError: (e) => {
+        console.log({ e });
+      },
+      onSuccess: (res) => {
+        onReset();
+        alert("프로 입점 양식 등록 완료 ");
+      },
+    });
+    // console.log({ selectedImage, multipleImages, rawImages });
+    // console.log(JSON.stringify(data, null, 2));
+    // }
   };
 
   const handleAddClick = (e: any) => {
@@ -316,7 +319,7 @@ export default function BForm() {
   const onSave = () => {
     const saveObj = {
       name: watch("name"),
-      phone: watch("phone"),
+      // phone: watch("phone"),
     };
     localStorage.setItem("temp", JSON.stringify(saveObj));
     localStorage.setItem("singleImg", selectedImage);
@@ -325,7 +328,7 @@ export default function BForm() {
     localStorage.setItem("multiImgPreview", rawImages);
   };
 
-  console.log({ career, school, license, channel });
+  // console.log({ career, school, license, channel });
 
   return (
     <Block>
@@ -382,7 +385,7 @@ export default function BForm() {
                 <SelectBlock>
                   <Select
                     {...field}
-                    defaultValue={{ value: "male", label: "남자" }}
+                    // defaultValue={{ value: "male", label: "남자" }}
                     options={[
                       { value: "male", label: "남자" },
                       { value: "female", label: "여자" },
@@ -403,7 +406,7 @@ export default function BForm() {
                 <SelectBlock>
                   <Select
                     {...field}
-                    defaultValue={{ value: "00", label: "서울" }}
+                    // defaultValue={{ value: "00", label: "서울" }}
                     options={[
                       { value: "00", label: "서울" },
                       { value: "01", label: "인천" },
@@ -427,7 +430,7 @@ export default function BForm() {
                 <SelectBlock>
                   <Select
                     {...field}
-                    defaultValue={{ value: "00", label: "도수 치료" }}
+                    // defaultValue={{ value: "00", label: "도수 치료" }}
                     options={[
                       { value: "00", label: "도수 치료" },
                       { value: "01", label: "카이로 프택틱" },
@@ -444,7 +447,7 @@ export default function BForm() {
             <Label>간단 소개글(3000자 제한)</Label>
             <Controller
               control={control}
-              name="pdesc"
+              name="desc"
               render={({ field: { value, ...rest } }) => {
                 return (
                   <>
@@ -467,11 +470,11 @@ export default function BForm() {
               }}
             />
 
-            <P>{errors.pdesc?.message}</P>
+            <P>{errors.desc?.message}</P>
           </Grid>
 
           <Grid item xs={6}>
-            <p>사업자 이미지 등록*</p>
+            <p>자격증 이미지 등록*</p>
             <input
               {...params}
               type="file"

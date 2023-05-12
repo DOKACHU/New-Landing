@@ -101,3 +101,54 @@ export const schema = yup
       }),
   })
   .required();
+
+export const proSchema = yup
+  .object({
+    desc: yup
+      .string()
+      .min(1, "자기소개는 1자리 이상 써주세요.")
+      .max(3000, "자기소개는 3000자리 이하로 써주세요.")
+      .required("자기소개는 필수 항목 입니다."),
+
+    subject: yup.object().required(),
+    location: yup.object().required(),
+    gender: yup.object().required(),
+    career: yup.string().required("경력은 필수 항목 입니다."),
+    school: yup.string().required("학력은 필수 항목 입니다."),
+    license: yup.string().required("자격증은 필수 항목 입니다."),
+    channel: yup.string(),
+    policy: yup.string(),
+
+    name: yup
+      .string()
+      .matches(nameRegExp, "정확한 한글 또는 영어로 이름을 입력해주세요.")
+      .min(2, "이름은 2글자 이상 써주세요.")
+      .max(9, "이름은 10자 이내로 써주세요.")
+      .required("이름을 필수 항목 입니다."),
+  })
+  .shape({
+    multiplePhoto: yup
+      .mixed()
+      .test(
+        "required",
+        "다중 이미지는 필수 항목입니다.",
+        (value: any) => value.length > 0
+      ),
+    singlePhoto: yup
+      .mixed()
+      .test(
+        "required",
+        "이미지는 필수 항목입니다.",
+        (value: any) => value.length > 0
+      )
+      // .test("fileSize", "File Size is too large", (value: any) => {
+      //   return value?.length && value[0].size <= 5242880;
+      // })
+      .test("fileType", "Unsupported File Format", (value: any) => {
+        return (
+          value?.length &&
+          ["image/jpeg", "image/png", "image/jpg"].includes(value[0].type)
+        );
+      }),
+  })
+  .required();
