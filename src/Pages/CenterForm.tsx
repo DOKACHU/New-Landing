@@ -467,10 +467,14 @@ export default function CenterForm({ handle }: any) {
             {fields.map((obj, index) => {
               return (
                 <div key={index}>
-                  <Chip label={obj.name} key={index} />
-                  <button onClick={() => handlee.clickDelete(index)}>
+                  <Chip
+                    label={obj.name}
+                    key={index}
+                    onClick={() => handlee.clickDelete(index)}
+                  />
+                  {/* <button onClick={() => handlee.clickDelete(index)}>
                     삭제
-                  </button>
+                  </button> */}
                 </div>
               );
             })}
