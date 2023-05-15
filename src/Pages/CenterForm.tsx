@@ -1,6 +1,8 @@
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { WithContext as ReactTags } from "react-tag-input";
+
 import {
   Grid,
   Checkbox,
@@ -13,8 +15,8 @@ import {
   Chip,
 } from "@mui/material";
 import { P } from "../styles";
-import { useState } from "react";
-import { phoneNumber, ErrorEmptyCheck } from "../utils";
+import { useRef, useState } from "react";
+import { phoneNumber } from "../utils";
 import {
   Block,
   Label,
@@ -46,19 +48,16 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
-export default function CenterForm({
-  openPostcode,
-  handle,
-  inputRef,
-  setOpenPostcode,
-  address,
-}: any) {
+
+export default function CenterForm({ handle }: any) {
+  const addressRef = useRef<HTMLInputElement | null>(null);
+  const [open, setOpen] = useState<boolean>(false);
   const [preview, setPreview] = useState<any>(null);
   const [selectedImage, setSelectedImage] = useState<any>(null);
   const [multipleImages, setMultipleImages] = useState<any>([]);
   const [rawImages, setRawImages] = useState<any>([]);
   const { mutate: createCenter } = useCreateCenter();
-  const { handleClick, tags, tagsRef } = useTags();
+  // const { handleClick, tags, tagsRef } = useTags();
 
   const getLocalStorage =
     localStorage.getItem("temp") === undefined
@@ -69,16 +68,24 @@ export default function CenterForm({
     control,
     register,
     handleSubmit,
-    // watch,
+    watch,
     reset,
+    resetField,
+    setValue,
     formState: { errors },
   } = useForm<FormData>({
     defaultValues: {
       name: getLocalStorage.name,
-      // age: 33,
-      // email: "test@naver.com",
+      subject: { value: "00", label: "도수 치료" },
+      location: { value: "00", label: "서울" },
+      objList: [],
     },
     resolver: yupResolver(schema),
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "objList",
   });
 
   const { onChange, ...params } = register("singlePhoto");
@@ -106,60 +113,79 @@ export default function CenterForm({
     }
   };
 
+  const handlee = {
+    clickAdd: () => {
+      append({
+        name: watch("tag"),
+      });
+      resetField("tag");
+    },
+
+    clickDelete: (index: number) => {
+      remove(index);
+    },
+
+    clickCheck: () => {
+      alert("Success");
+    },
+  };
+
+  console.log({ errors });
+
   // submit
   const onSubmit = (data: FormData) => {
-    const isSubmit = ErrorEmptyCheck(errors);
-    if (isSubmit) {
-      const {
-        name,
-        proNumber,
-        location,
-        bizzNum,
-        address1,
-        address2,
-        subject,
-        phone,
-        email,
-        desc,
-      } = data as any;
-
-      const formData = new FormData(); // 새로운 폼 객체 생성
-      for (let i = 0; i < rawImages.length; i++) {
-        formData.append("centerImages", rawImages[i]);
-      }
-
-      formData.append("registration", selectedImage); // <input name="item" value="hi"> 와 같다.
-      formData.append("centerName", name);
-      formData.append("city", location?.label);
-
-      formData.append("address1", address1);
-      formData.append("address2", address2);
-      formData.append("businessRegistrationNumber", String(bizzNum));
-      formData.append("memberCount", String(proNumber));
-
-      formData.append("therapyCategory", subject?.label);
-      formData.append("phoneNumber", phone);
-
-      formData.append("email", email);
-      formData.append("description", desc);
-      // for (let i = 0; i < tags.length; i++) {
-      //   formData.append(`tags[${i}]`, tags[i]);
-      // }
-
-      createCenter(formData, {
-        onError: (e) => {
-          console.log({ e });
-        },
-        onSuccess: (res) => {
-          console.log({ res });
-          onReset();
-          alert("센터 입점 양식 등록 완료 ");
-        },
-      });
-
-      // console.log({ selectedImage, multipleImages, rawImages });
-      // console.log(JSON.stringify(data, null, 2));
+    // const isSubmit = ErrorEmptyCheck(errors);
+    // if (isSubmit) {
+    const {
+      name,
+      proNumber,
+      location,
+      bizzNum,
+      address1,
+      address2,
+      subject,
+      phone,
+      email,
+      desc,
+    } = data as any;
+    console.log({ data });
+    const formData = new FormData(); // 새로운 폼 객체 생성
+    for (let i = 0; i < rawImages.length; i++) {
+      formData.append("centerImages", rawImages[i]);
     }
+
+    formData.append("registration", selectedImage); // <input name="item" value="hi"> 와 같다.
+    formData.append("centerName", name);
+    formData.append("city", location?.label);
+
+    formData.append("address1", address1);
+    formData.append("address2", address2);
+    formData.append("businessRegistrationNumber", String(bizzNum));
+    formData.append("memberCount", String(proNumber));
+
+    formData.append("therapyCategory", subject?.label);
+    formData.append("phoneNumber", phone);
+
+    formData.append("email", email);
+    formData.append("description", desc);
+    // for (let i = 0; i < tags.length; i++) {
+    //   formData.append(`tags[${i}]`, tags[i]);
+    // }
+
+    createCenter(formData, {
+      onError: (e) => {
+        console.log({ e });
+      },
+      onSuccess: (res) => {
+        console.log({ res });
+        onReset();
+        alert("센터 입점 양식 등록 완료 ");
+      },
+    });
+
+    // console.log({ selectedImage, multipleImages, rawImages });
+    // console.log(JSON.stringify(data, null, 2));
+    // }
   };
 
   const onReset = () => {
@@ -244,7 +270,7 @@ export default function CenterForm({
                 <SelectBlock>
                   <Select
                     {...field}
-                    defaultValue={{ value: "00", label: "서울" }}
+                    // defaultValue={{ value: "00", label: "서울" }}
                     options={[
                       { value: "00", label: "서울" },
                       { value: "01", label: "인천" },
@@ -268,23 +294,29 @@ export default function CenterForm({
                   <Label>대표주소*</Label>
                   <Input
                     {...field}
-                    value={address}
-                    // {...register("address1")}
                     placeholder="대표 주소 입력"
-                    ref={inputRef}
+                    ref={addressRef}
                     onClick={() => {
-                      handle.clickButton();
+                      setOpen(true);
                     }}
                   />
                   <P>{errors.address1?.message}</P>
                 </Grid>
               )}
             />
-            <Modal open={openPostcode} onClose={() => setOpenPostcode(false)}>
+            <Modal open={open} onClose={() => setOpen(false)}>
               <Box sx={style}>
                 <DaumPostcode
-                  onComplete={handle.selectAddress}
-                  autoClose={false}
+                  onComplete={(data) => {
+                    if (addressRef.current) {
+                      addressRef.current.value = data.address;
+                      setValue("address1", data.address, {
+                        shouldValidate: true,
+                      });
+                    }
+                    setOpen(false);
+                  }}
+                  autoClose={true}
                   defaultQuery="" //  판교역로 235
                 />
               </Box>
@@ -297,9 +329,10 @@ export default function CenterForm({
               control={control}
               render={({ field }) => (
                 <Grid item xs={12}>
-                  <Label>대표주소*</Label>
+                  <Label>상세 주소*</Label>
                   <Input
-                    {...register("address2")}
+                    {...field}
+                    // {...register("address2")}
                     placeholder="상세 주소 입력"
                   />
                   <P>{errors.address2?.message}</P>
@@ -325,7 +358,7 @@ export default function CenterForm({
                 <SelectBlock>
                   <Select
                     {...field}
-                    defaultValue={{ value: "00", label: "도수 치료" }}
+                    // defaultValue={{ value: "00", label: "도수 치료" }}
                     options={[
                       { value: "00", label: "도수 치료" },
                       { value: "01", label: "카이로 프택틱" },
@@ -387,7 +420,7 @@ export default function CenterForm({
                       }}
                     >
                       <span>{`${value?.length || 0} / 3000`}</span>
-                    </div>{" "}
+                    </div>
                   </>
                 );
               }}
@@ -396,15 +429,6 @@ export default function CenterForm({
             <P>{errors.desc?.message}</P>
           </Grid>
 
-          {/* <Grid item xs={6}>
-            <input {...register("years")} placeholder="YYYY" />
-            <P>{errors.years?.message}</P>
-          </Grid>
-
-          <Grid item xs={6}>
-            <input {...register("month")} placeholder="MM" />
-            <P>{errors.month?.message}</P>
-          </Grid> */}
           <Grid item xs={6}>
             <Label>담당자 연락처 *</Label>
             <Controller
@@ -428,85 +452,36 @@ export default function CenterForm({
 
           <Grid item xs={12}>
             <Label>태그 *</Label>
-
             <FormGroup row>
               <TagInput
-                {...register("tags")}
-                ref={tagsRef}
+                {...register("tag")}
+                type="text"
                 placeholder="병원 검색 키워드 (키워드는 최대 3개까지 입력 가능합니다.)"
               />
               <TagButton
-                disabled={tags.length > 2}
+                // disabled={}
                 type="button"
-                onClick={handleClick}
+                onClick={handlee.clickAdd}
               >
                 추가
               </TagButton>
             </FormGroup>
-
-            <Stack
-              style={{
-                marginTop: "10px",
-              }}
-              direction={"row"}
-              spacing={1}
-            >
-              {tags.map((tagLabel: string, i: any) => {
-                return <Chip label={tagLabel} key={i} />;
-              })}
-            </Stack>
-            <P>{tags.length === 0 && errors.tags?.message}</P>
+            <P>{errors.objList?.message}</P>
+            {fields.map((obj, index) => {
+              return (
+                <div key={index}>
+                  <Chip label={obj.name} key={index} />
+                  <button onClick={() => handlee.clickDelete(index)}>
+                    삭제
+                  </button>
+                </div>
+              );
+            })}
           </Grid>
-
-          {/* <Grid item xs={6}>
-            <Label>태그 *</Label>
-            <Controller
-              control={control}
-              name="tags"
-              render={({ field }) => {
-                return (
-                  <>
-                    <FormGroup row>
-                      <TagInput
-                        {...register("tags")}
-                        ref={tagsRef}
-                        placeholder="병원 검색 키워드 (키워드는 최대 3개까지 입력 가능합니다.)"
-                      />
-                      <TagButton
-                        disabled={tags.length > 2}
-                        type="button"
-                        onClick={handleClick}
-                      >
-                        추가
-                      </TagButton>
-                    </FormGroup>
-                    <Stack
-                      style={{
-                        marginTop: "10px",
-                      }}
-                      {...field}
-                      direction={"row"}
-                      spacing={1}
-                    >
-                      {tags.map((tagLabel: string, i: any) => {
-                        return <Chip label={tagLabel} key={i} />;
-                      })}
-                    </Stack>
-                  </>
-                );
-              }}
-            />
-            <P>{tags.length === 0 && errors.tags?.message}</P>
-          </Grid> */}
 
           <Grid item xs={12}>
             <Label>이용약관</Label>
-            <TextArea
-              {...register("policy")}
-              rows={8}
-              readOnly
-              // placeholder="병원 소개를 적어주세요."
-            />
+            <TextArea {...register("policy")} rows={8} readOnly />
             <P>{errors.policy?.message}</P>
           </Grid>
         </Grid>

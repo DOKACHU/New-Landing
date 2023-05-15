@@ -5,7 +5,6 @@ const useTags = () => {
   const [tags, setTags] = useState<any>([]);
 
   const tagsRef = useRef<any>(null);
-
   const handleClick = () => {
     const { current } = tagsRef;
 

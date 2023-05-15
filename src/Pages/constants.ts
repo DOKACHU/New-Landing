@@ -5,33 +5,32 @@ const phoneRegExp =
 const nameRegExp = /^[가-힣]{2,10}|[a-zA-Z]{2,10}\s[a-zA-Z]{2,10}$/;
 // const bizzNumberRegExp = /^[0-9]{3}-[0-9]{2}-[0-9]{5}$/;
 
+// center
 export const schema = yup
   .object({
+    // test: yup.object().required(),
+    objList: yup
+      .array()
+      .min(1)
+      .max(3)
+      .of(
+        yup.object().shape({
+          name: yup.string().min(4),
+        })
+      )
+      .typeError("asdf"),
     desc: yup
       .string()
       .min(1, "병원소개는 1자리 이상 써주세요.")
       .max(3000, "병원소개는 3000자리 이하로 써주세요.")
       .required("병원소개는 필수 항목 입니다."),
 
-    pdesc: yup
-      .string()
-      .min(1, "자기소개는 1자리 이상 써주세요.")
-      .max(3000, "자기소개는 3000자리 이하로 써주세요.")
-      .required("자기소개는 필수 항목 입니다."),
-
     address1: yup.string().required("주소는 필수 항목 입니다."),
     address2: yup.string().required("상세주소는 필수 항목 입니다."),
 
-    subject: yup.string().required("진료항목은 필수 항목 입니다."),
-    location: yup.string().required("지역은 필수 항목 입니다."),
-    gender: yup.string().required("성별은 필수 항목 입니다."),
-    career: yup.string().required("경력은 필수 항목 입니다."),
-    school: yup.string().required("학력은 필수 항목 입니다."),
-    license: yup.string().required("자격증은 필수 항목 입니다."),
-    channel: yup.string(),
+    subject: yup.object().required("진료항목은 필수 항목 입니다."),
+    location: yup.object().required("지역은 필수 항목 입니다."),
     policy: yup.string(),
-
-    tags: yup.string().required("태그는 필수 항목 입니다."),
 
     bizzNum: yup
       .string()
@@ -49,18 +48,6 @@ export const schema = yup
       .max(9, "이름은 10자 이내로 써주세요.")
       .required("이름을 필수 항목 입니다."),
 
-    // years: yup
-    //   .string()
-    //   .min(1, "연도는 1자리 이상 써주세요.")
-    //   .max(4, "연도는 4자리 이하로 써주세요.")
-    //   .required("연도는 필수 항목 입니다."),
-
-    // month: yup
-    //   .string()
-    //   .min(1, "월 입력은 1자리 이상 써주세요.")
-    //   .max(2, "월 입력은 2자리 이하로 써주세요.")
-    //   .required("월 입력은 필수 항목 입니다."),
-
     proNumber: yup
       .number()
       .min(1, "치료사 수는 1이상 써주세요.")
@@ -76,6 +63,12 @@ export const schema = yup
     acceptTerms: yup.bool().oneOf([true], "Accept Terms is required"),
   })
   .shape({
+    tag: yup.string(),
+    // tags: yup.array().of(yup.object()).required("태그는 필수 항목입니다."),
+    // .test("required", "태그는 필수 항목입니다.", (value: any) =>
+    //   console.log({ value })
+    // ),
+
     multiplePhoto: yup
       .mixed()
       .test(
@@ -102,6 +95,7 @@ export const schema = yup
   })
   .required();
 
+// pro
 export const proSchema = yup
   .object({
     desc: yup
