@@ -1,7 +1,6 @@
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { WithContext as ReactTags } from "react-tag-input";
 
 import {
   Grid,
@@ -11,7 +10,6 @@ import {
   Modal,
   Box,
   FormGroup,
-  Stack,
   Chip,
 } from "@mui/material";
 import { P } from "../styles";
@@ -34,7 +32,7 @@ import { Select } from "../components";
 import { schema } from "./constants";
 import arrow from "./arrow.png";
 import DaumPostcode from "react-daum-postcode";
-import { useCreateCenter, useTags } from "../hooks";
+import { useCreateCenter } from "../hooks";
 
 type FormData = yup.InferType<typeof schema>;
 const style = {
@@ -57,7 +55,6 @@ export default function CenterForm({ handle }: any) {
   const [multipleImages, setMultipleImages] = useState<any>([]);
   const [rawImages, setRawImages] = useState<any>([]);
   const { mutate: createCenter } = useCreateCenter();
-  // const { handleClick, tags, tagsRef } = useTags();
 
   const getLocalStorage =
     localStorage.getItem("temp") === undefined
