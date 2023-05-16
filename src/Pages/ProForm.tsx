@@ -1,4 +1,4 @@
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { Grid, Typography } from "@mui/material";
@@ -27,7 +27,7 @@ import {
 import { Select } from "../components";
 import arrow from "./arrow.png";
 import { useCreatePro } from "../hooks";
-
+import { allowOnlyNumber } from "../utils";
 type FormData = yup.InferType<typeof proSchema>;
 
 export default function BForm() {
@@ -98,8 +98,40 @@ export default function BForm() {
       subject: { value: "00", label: "도수 치료" },
       gender: { value: "male", label: "남자" },
       location: { value: "00", label: "서울" },
+      careerList: [
+        {
+          startYear: "",
+          startMonth: "",
+          endYear: "",
+          endMonth: "",
+          content: "",
+        },
+      ],
+      schoolList: [
+        {
+          startYear: "",
+          startMonth: "",
+          endYear: "",
+          endMonth: "",
+          content: "",
+        },
+      ],
+      licenseList: [
+        {
+          registerYear: "",
+          registerMonth: "",
+          licenseName: "",
+          licenseNumber: "",
+        },
+      ],
+      channelList: [
+        {
+          channelLink: "",
+        },
+      ],
     },
     resolver: yupResolver(proSchema),
+    mode: "onChange",
   });
   // const { onChange: onPhoneChange, ...rest } = register("phone");
   const { onChange, ...params } = register("singlePhoto");
@@ -201,108 +233,6 @@ export default function BForm() {
     // }
   };
 
-  const handleAddClick = (e: any) => {
-    e.preventDefault();
-
-    const newObj = {
-      startYear: "",
-      startMonth: "",
-      endYear: "",
-      endMonth: "",
-      content: "",
-    };
-    setCareer([...career, newObj]);
-  };
-
-  const handleSchoolAddClick = (e: any) => {
-    e.preventDefault();
-
-    const newObj = {
-      startYear: "",
-      startMonth: "",
-      endYear: "",
-      endMonth: "",
-      content: "",
-    };
-    setSchool([...school, newObj]);
-  };
-
-  const handleLicenseAddClick = (e: any) => {
-    e.preventDefault();
-    const newObj = {
-      licenseName: "",
-      licenseNumber: "",
-      registerYear: "",
-      registerMonth: "",
-      registerDay: "",
-    };
-    setLicense([...license, newObj]);
-  };
-
-  const handleChannelAddClick = (e: any) => {
-    e.preventDefault();
-    const newObj = {
-      content: "",
-    };
-    setChannel([...channel, newObj]);
-  };
-
-  const handleCareerChange = (e: any, index: number) => {
-    const { value, name } = e.target;
-    console.log({ name });
-    // const result = isNumber ? value.replace(/\D/g, "") : value;
-    let newArr = career.map((item: any, i: number) => {
-      if (index === i) {
-        return { ...item, [name]: value };
-      } else {
-        return item;
-      }
-    });
-    setCareer(newArr);
-  };
-
-  const handleSchoolChange = (e: any, index: number) => {
-    const { value, name } = e.target;
-    console.log({ name });
-    // const result = isNumber ? value.replace(/\D/g, "") : value;
-    let newArr = school.map((item: any, i: number) => {
-      if (index === i) {
-        return { ...item, [name]: value };
-      } else {
-        return item;
-      }
-    });
-    setSchool(newArr);
-  };
-
-  const handleLicenseChange = (e: any, index: number) => {
-    const { value, name } = e.target;
-    console.log({ name, value });
-    // const result = isNumber ? value.replace(/\D/g, "") : value;
-    let newArr = license.map((item: any, i: number) => {
-      if (index === i) {
-        return { ...item, [name]: value };
-      } else {
-        return item;
-      }
-    });
-    setLicense(newArr);
-  };
-
-  const handleChannelChange = (e: any, index: number) => {
-    const { value, name } = e.target;
-    console.log({ name, value });
-    // const result = isNumber ? value.replace(/\D/g, "") : value;
-    let newArr = channel.map((item: any, i: number) => {
-      if (index === i) {
-        return { ...item, [name]: value };
-      } else {
-        return item;
-      }
-    });
-    setChannel(newArr);
-  };
-
   const onReset = () => {
     reset();
     setSelectedImage(null);
@@ -329,6 +259,129 @@ export default function BForm() {
   };
 
   // console.log({ career, school, license, channel });
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "careerList",
+  });
+
+  const {
+    fields: schools,
+    append: sappend,
+    remove: sremove,
+  } = useFieldArray({
+    control,
+    name: "schoolList",
+  });
+
+  const {
+    fields: licenses,
+    append: lappend,
+    remove: lremove,
+  } = useFieldArray({
+    control,
+    name: "licenseList",
+  });
+
+  const {
+    fields: channels,
+    append: cappend,
+    remove: cremove,
+  } = useFieldArray({
+    control,
+    name: "channelList",
+  });
+
+  // handler
+  const handle = {
+    // 추가 (* 수정)
+    clickAdd: () => {
+      append({
+        startYear: "",
+        startMonth: "",
+        endYear: "",
+        endMonth: "",
+        content: "",
+      });
+    },
+
+    // 삭제 (* 수정)
+    clickDelete: (index: number) => {
+      remove(index);
+    },
+
+    // 검증
+    clickCheck: () => {
+      alert("Success");
+      console.log(watch());
+    },
+  };
+
+  const shandle = {
+    // 추가 (* 수정)
+    clickAdd: () => {
+      sappend({
+        startYear: "",
+        startMonth: "",
+        endYear: "",
+        endMonth: "",
+        content: "",
+      });
+    },
+
+    // 삭제 (* 수정)
+    clickDelete: (index: number) => {
+      sremove(index);
+    },
+
+    // 검증
+    clickCheck: () => {
+      alert("Success");
+      console.log(watch());
+    },
+  };
+
+  const chandle = {
+    // 추가 (* 수정)
+    clickAdd: () => {
+      cappend({
+        channelLink: "",
+      });
+    },
+
+    // 삭제 (* 수정)
+    clickDelete: (index: number) => {
+      cremove(index);
+    },
+
+    // 검증
+    clickCheck: () => {
+      alert("Success");
+      console.log(watch());
+    },
+  };
+
+  const lhandle = {
+    // 추가 (* 수정)
+    clickAdd: () => {
+      lappend({
+        registerYear: "",
+        registerMonth: "",
+        licenseName: "",
+        licenseNumber: "",
+      });
+    },
+
+    // 삭제 (* 수정)
+    clickDelete: (index: number) => {
+      lremove(index);
+    },
+
+    // 검증
+    clickCheck: () => {
+      alert("Success");
+      console.log(watch());
+    },
+  };
 
   return (
     <Block>
@@ -498,358 +551,382 @@ export default function BForm() {
           <Grid item xs={12}>
             <Label>경력*</Label>
             <CustomDivdier />
-            <AddButton type="button" name={"career"} onClick={handleAddClick}>
+            <AddButton type="button" onClick={handle.clickAdd}>
               +추가하기
             </AddButton>
-            <Controller
-              control={control}
-              name="career"
-              render={({ field: { value, onChange, ...rest } }) => {
-                return (
-                  <div>
-                    <AddItemSection>
-                      {career.map((v: any, i: number) => {
-                        // const result = checkProperties(career[i]);
-
-                        return (
-                          <div
-                            style={{
-                              display: "flex",
-                              gap: "80px",
-                            }}
-                          >
-                            <Row>
-                              <YearInput
-                                {...rest}
-                                placeholder="YYYY"
-                                value={v.startYear}
-                                type="text"
-                                maxLength={4}
-                                name="startYear"
-                                onChange={(e: any) => {
-                                  handleCareerChange(e, i);
-                                  onChange(v.startYear);
-                                }}
-                              />
-                              <span>.</span>
-                              <MonthInput
-                                {...rest}
-                                value={v.startMonth}
-                                placeholder="MM"
-                                type="text"
-                                maxLength={2}
-                                name="startMonth"
-                                onChange={(e: any) => {
-                                  handleCareerChange(e, i);
-                                  onChange(v.startMonth);
-                                }}
-                              />
-                            </Row>
-                            <Row>
-                              <YearInput
-                                {...rest}
-                                placeholder="YYYY"
-                                value={v.endYear}
-                                type="text"
-                                maxLength={4}
-                                name="endYear"
-                                onChange={(e: any) => {
-                                  handleCareerChange(e, i);
-                                  onChange(v.endYear);
-                                }}
-                              />
-                              <span>.</span>
-                              <MonthInput
-                                {...rest}
-                                value={v.endMonth}
-                                placeholder="MM"
-                                type="text"
-                                maxLength={2}
-                                name="endMonth"
-                                onChange={(e: any) => {
-                                  handleCareerChange(e, i);
-                                  onChange(v.endMonth);
-                                }}
-                              />
-                            </Row>
-                            <Row>
-                              <ItemInput
-                                {...rest}
-                                value={v.content}
-                                type="text"
-                                name="content"
-                                placeholder="병원명"
-                                onChange={(e: any) => {
-                                  handleCareerChange(e, i);
-                                  onChange(v.content);
-                                }}
-                              />
-                            </Row>
-                          </div>
-                        );
-                      })}
-                    </AddItemSection>
+            {fields.map((obj, index) => {
+              return (
+                <AddItemSection key={index}>
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "80px",
+                    }}
+                  >
+                    <Row>
+                      <Controller
+                        control={control}
+                        name={`careerList.${index}.startYear`}
+                        render={({ field: { onChange, ...rest } }) => (
+                          <>
+                            <YearInput
+                              {...rest}
+                              type="text"
+                              placeholder="YYYY"
+                              maxLength={4}
+                              onChange={(e: any) =>
+                                onChange(allowOnlyNumber(e.target.value))
+                              }
+                            />
+                          </>
+                        )}
+                      />
+                      <span>.</span>
+                      <Controller
+                        control={control}
+                        name={`careerList.${index}.startMonth`}
+                        render={({ field: { onChange, ...rest } }) => (
+                          <>
+                            <MonthInput
+                              {...rest}
+                              type="text"
+                              placeholder="MM"
+                              maxLength={2}
+                              onChange={(e: any) =>
+                                onChange(allowOnlyNumber(e.target.value))
+                              }
+                            />
+                          </>
+                        )}
+                      />
+                    </Row>
+                    <Row>
+                      <Controller
+                        control={control}
+                        name={`careerList.${index}.endYear`}
+                        render={({ field: { onChange, ...rest } }) => (
+                          <>
+                            <YearInput
+                              {...rest}
+                              type="text"
+                              placeholder="YYYY"
+                              maxLength={4}
+                              onChange={(e: any) =>
+                                onChange(allowOnlyNumber(e.target.value))
+                              }
+                            />
+                          </>
+                        )}
+                      />
+                      <span>.</span>
+                      <Controller
+                        control={control}
+                        name={`careerList.${index}.endMonth`}
+                        render={({ field: { onChange, ...rest } }) => (
+                          <>
+                            <MonthInput
+                              {...rest}
+                              type="text"
+                              placeholder="MM"
+                              maxLength={2}
+                              onChange={(e: any) =>
+                                onChange(allowOnlyNumber(e.target.value))
+                              }
+                            />
+                          </>
+                        )}
+                      />
+                    </Row>
+                    <Row>
+                      <Controller
+                        control={control}
+                        name={`careerList.${index}.content`}
+                        render={({ field }) => (
+                          <>
+                            <ItemInput
+                              {...field}
+                              type="text"
+                              name="content"
+                              placeholder="병원명"
+                            />
+                          </>
+                        )}
+                      />
+                    </Row>
+                    {fields.length > 1 && (
+                      <button onClick={() => handle.clickDelete(index)}>
+                        삭제
+                      </button>
+                    )}
                   </div>
-                );
-              }}
-            />
-
-            <P>{errors.career?.message}</P>
+                </AddItemSection>
+              );
+            })}
           </Grid>
 
           {/* 학력 */}
           <Grid item xs={12}>
             <Label>학력*</Label>
             <CustomDivdier />
-            <AddButton
-              type="button"
-              name={"school"}
-              onClick={handleSchoolAddClick}
-            >
+            <AddButton type="button" onClick={shandle.clickAdd}>
               +추가하기
             </AddButton>
-            <Controller
-              control={control}
-              name="school"
-              render={({ field: { value, onChange, ...rest } }) => {
-                return (
-                  <div>
-                    <AddItemSection>
-                      {school.map((v: any, i: number) => {
-                        return (
-                          <div
-                            style={{
-                              display: "flex",
-                              gap: "80px",
-                            }}
-                          >
-                            <Row>
-                              <YearInput
-                                {...rest}
-                                placeholder="YYYY"
-                                value={v.startYear}
-                                type="text"
-                                maxLength={4}
-                                name="startYear"
-                                onChange={(e: any) => {
-                                  handleSchoolChange(e, i);
-                                  onChange(v.startYear);
-                                }}
-                              />
-                              <span>.</span>
-                              <MonthInput
-                                {...rest}
-                                value={v.startMonth}
-                                placeholder="MM"
-                                type="text"
-                                maxLength={2}
-                                name="startMonth"
-                                onChange={(e: any) => {
-                                  handleSchoolChange(e, i);
-                                  onChange(v.startMonth);
-                                }}
-                              />
-                            </Row>
-                            <Row>
-                              <YearInput
-                                {...rest}
-                                placeholder="YYYY"
-                                value={v.endYear}
-                                type="text"
-                                maxLength={4}
-                                name="endYear"
-                                onChange={(e: any) => {
-                                  handleSchoolChange(e, i);
-                                  onChange(v.endYear);
-                                }}
-                              />
-                              <span>.</span>
-                              <MonthInput
-                                {...rest}
-                                value={v.endMonth}
-                                placeholder="MM"
-                                type="text"
-                                maxLength={2}
-                                name="endMonth"
-                                onChange={(e: any) => {
-                                  handleSchoolChange(e, i);
-                                  onChange(v.endMonth);
-                                }}
-                              />
-                            </Row>
-                            <Row>
-                              <ItemInput
-                                {...rest}
-                                value={v.content}
-                                type="text"
-                                name="content"
-                                placeholder="학력"
-                                onChange={(e: any) => {
-                                  handleSchoolChange(e, i);
-                                  onChange(v.content);
-                                }}
-                              />
-                            </Row>
-                          </div>
-                        );
-                      })}
-                    </AddItemSection>
+            {schools.map((obj, index) => {
+              return (
+                <AddItemSection key={index}>
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "80px",
+                    }}
+                  >
+                    <Row>
+                      <Controller
+                        control={control}
+                        name={`schoolList.${index}.startYear`}
+                        render={({ field: { onChange, ...rest } }) => (
+                          <>
+                            <YearInput
+                              {...rest}
+                              type="text"
+                              placeholder="YYYY"
+                              maxLength={4}
+                              onChange={(e: any) =>
+                                onChange(allowOnlyNumber(e.target.value))
+                              }
+                            />
+                          </>
+                        )}
+                      />
+                      <span>.</span>
+                      <Controller
+                        control={control}
+                        name={`schoolList.${index}.startMonth`}
+                        render={({ field: { onChange, ...rest } }) => (
+                          <>
+                            <MonthInput
+                              {...rest}
+                              type="text"
+                              placeholder="MM"
+                              maxLength={2}
+                              onChange={(e: any) =>
+                                onChange(allowOnlyNumber(e.target.value))
+                              }
+                            />
+                          </>
+                        )}
+                      />
+                    </Row>
+                    <Row>
+                      <Controller
+                        control={control}
+                        name={`schoolList.${index}.endYear`}
+                        render={({ field: { onChange, ...rest } }) => (
+                          <>
+                            <YearInput
+                              {...rest}
+                              type="text"
+                              placeholder="YYYY"
+                              maxLength={4}
+                              onChange={(e: any) =>
+                                onChange(allowOnlyNumber(e.target.value))
+                              }
+                            />
+                          </>
+                        )}
+                      />
+                      <span>.</span>
+                      <Controller
+                        control={control}
+                        name={`schoolList.${index}.endMonth`}
+                        render={({ field: { onChange, ...rest } }) => (
+                          <>
+                            <MonthInput
+                              {...rest}
+                              type="text"
+                              placeholder="MM"
+                              maxLength={2}
+                              onChange={(e: any) =>
+                                onChange(allowOnlyNumber(e.target.value))
+                              }
+                            />
+                          </>
+                        )}
+                      />
+                    </Row>
+                    <Row>
+                      <Controller
+                        control={control}
+                        name={`schoolList.${index}.content`}
+                        render={({ field }) => (
+                          <>
+                            <ItemInput
+                              {...field}
+                              type="text"
+                              name="content"
+                              placeholder="학력"
+                            />
+                          </>
+                        )}
+                      />
+                    </Row>
+                    {schools.length > 1 && (
+                      <button onClick={() => shandle.clickDelete(index)}>
+                        삭제
+                      </button>
+                    )}
                   </div>
-                );
-              }}
-            />
-
-            <P>{errors.school?.message}</P>
+                </AddItemSection>
+              );
+            })}
           </Grid>
 
           {/* 자격증 */}
           <Grid item xs={12}>
-            <Label>자격증*</Label>
+            <Label> 자격증*</Label>
             <CustomDivdier />
-            <AddButton
-              type="button"
-              name={"license"}
-              onClick={handleLicenseAddClick}
-            >
+            <AddButton type="button" onClick={lhandle.clickAdd}>
               +추가하기
             </AddButton>
-            <Controller
-              control={control}
-              name="license"
-              render={({ field: { value, onChange, ...rest } }) => {
-                return (
-                  <div>
-                    <AddItemSection>
-                      {license.map((v: any, i: number) => {
-                        return (
-                          <div
-                            style={{
-                              display: "flex",
-                              gap: "10px",
-                            }}
-                          >
-                            <Row>
-                              <ItemInput
-                                {...rest}
-                                value={v.licenseName}
-                                type="text"
-                                placeholder={"자격증 이름"}
-                                name="licenseName"
-                                maxLength={10}
-                                onChange={(e: any) => {
-                                  handleLicenseChange(e, i);
-                                  onChange(v.licenseName);
-                                }}
-                              />
-                            </Row>
-                            <Row>
-                              <ItemInput
-                                {...rest}
-                                value={v.licenseNumber}
-                                type="text"
-                                placeholder={"자격증 번호"}
-                                name="licenseNumber"
-                                maxLength={10}
-                                onChange={(e: any) => {
-                                  handleLicenseChange(e, i);
-                                  onChange(v.licenseNumber);
-                                }}
-                              />
-                            </Row>
-                            <Row>
-                              <YearInput
-                                {...rest}
-                                placeholder="YYYY"
-                                value={v.registerYear}
-                                type="text"
-                                maxLength={4}
-                                name="registerYear"
-                                onChange={(e: any) => {
-                                  handleLicenseChange(e, i);
-                                  onChange(v.registerYear);
-                                }}
-                              />
-                              <span>.</span>
-                              <MonthInput
-                                {...rest}
-                                value={v.registerMonth}
-                                placeholder="MM"
-                                type="text"
-                                maxLength={2}
-                                name="registerMonth"
-                                onChange={(e: any) => {
-                                  handleLicenseChange(e, i);
-                                  onChange(v.registerMonth);
-                                }}
-                              />
-                            </Row>
-                          </div>
-                        );
-                      })}
-                    </AddItemSection>
-                  </div>
-                );
-              }}
-            />
+            {licenses.map((obj, index) => {
+              return (
+                <AddItemSection key={index}>
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "10px",
+                    }}
+                  >
+                    <Row>
+                      <Controller
+                        control={control}
+                        name={`licenseList.${index}.licenseName`}
+                        render={({ field }) => (
+                          <>
+                            <ItemInput
+                              {...field}
+                              type="text"
+                              name="content"
+                              maxLength={10}
+                              placeholder={"자격증 이름"}
+                            />
+                          </>
+                        )}
+                      />
+                    </Row>
+                    <Row>
+                      <Controller
+                        control={control}
+                        name={`licenseList.${index}.licenseNumber`}
+                        render={({ field }) => (
+                          <>
+                            <ItemInput
+                              {...field}
+                              type="text"
+                              name="content"
+                              maxLength={10}
+                              placeholder={"자격증 번호"}
+                            />
+                          </>
+                        )}
+                      />
+                    </Row>
+                    <Row>
+                      <Controller
+                        control={control}
+                        name={`licenseList.${index}.registerYear`}
+                        render={({ field: { onChange, ...rest } }) => (
+                          <>
+                            <YearInput
+                              {...rest}
+                              type="text"
+                              placeholder="YYYY"
+                              maxLength={4}
+                              onChange={(e: any) =>
+                                onChange(allowOnlyNumber(e.target.value))
+                              }
+                            />
+                          </>
+                        )}
+                      />
+                      <span>.</span>
+                      <Controller
+                        control={control}
+                        name={`licenseList.${index}.registerMonth`}
+                        render={({ field: { onChange, ...rest } }) => (
+                          <>
+                            <MonthInput
+                              {...rest}
+                              type="text"
+                              placeholder="MM"
+                              maxLength={2}
+                              onChange={(e: any) =>
+                                onChange(allowOnlyNumber(e.target.value))
+                              }
+                            />
+                          </>
+                        )}
+                      />
+                    </Row>
 
-            <P>{errors.license?.message}</P>
+                    {licenses.length > 1 && (
+                      <button onClick={() => lhandle.clickDelete(index)}>
+                        삭제
+                      </button>
+                    )}
+                  </div>
+                </AddItemSection>
+              );
+            })}
           </Grid>
 
           {/* 채널 */}
           <Grid item xs={12}>
-            <Label>채널*</Label>
+            <Label> 채널*</Label>
             <CustomDivdier />
-            <AddButton
-              type="button"
-              name={"channel"}
-              onClick={handleChannelAddClick}
-            >
+            <AddButton type="button" onClick={chandle.clickAdd}>
               +추가하기
             </AddButton>
-            <Controller
-              control={control}
-              name="channel"
-              render={({ field: { value, onChange, ...rest } }) => {
-                return (
-                  <div>
-                    <AddItemSection>
-                      {channel.map((v: any, i: number) => {
-                        return (
-                          <div
-                            style={{
-                              display: "flex",
-                              gap: "30px",
-                            }}
-                          >
-                            <Row>
-                              <ItemInput
-                                style={{
-                                  width: "300px",
-                                }}
-                                {...rest}
-                                value={v.content}
-                                type="text"
-                                placeholder={
-                                  "ex) https://www.youtube.com/watch?v=test"
-                                }
-                                name="content"
-                                maxLength={30}
-                                onChange={(e: any) => {
-                                  handleChannelChange(e, i);
-                                  onChange(v.content);
-                                }}
-                              />
-                            </Row>
-                          </div>
-                        );
-                      })}
-                    </AddItemSection>
-                  </div>
-                );
-              }}
-            />
+            {channels.map((obj, index) => {
+              return (
+                <AddItemSection key={index}>
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "30px",
+                    }}
+                  >
+                    <Row>
+                      <Controller
+                        control={control}
+                        name={`channelList.${index}.channelLink`}
+                        render={({ field }) => (
+                          <>
+                            <ItemInput
+                              style={{
+                                width: "300px",
+                              }}
+                              {...field}
+                              type="text"
+                              name="content"
+                              placeholder={
+                                "ex) https://www.youtube.com/watch?v=test"
+                              }
+                            />
+                          </>
+                        )}
+                      />
+                    </Row>
 
-            <P>{errors.channel?.message}</P>
+                    {channels.length > 1 && (
+                      <button onClick={() => chandle.clickDelete(index)}>
+                        삭제
+                      </button>
+                    )}
+                  </div>
+                </AddItemSection>
+              );
+            })}
           </Grid>
 
           <Footer>

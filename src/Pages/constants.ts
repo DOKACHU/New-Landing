@@ -107,9 +107,9 @@ export const proSchema = yup
     subject: yup.object().required(),
     location: yup.object().required(),
     gender: yup.object().required(),
-    career: yup.string().required("경력은 필수 항목 입니다."),
-    school: yup.string().required("학력은 필수 항목 입니다."),
-    license: yup.string().required("자격증은 필수 항목 입니다."),
+    // career: yup.string().required("경력은 필수 항목 입니다."),
+    // school: yup.string().required("학력은 필수 항목 입니다."),
+    // license: yup.string().required("자격증은 필수 항목 입니다."),
     channel: yup.string(),
     policy: yup.string(),
 
@@ -121,6 +121,48 @@ export const proSchema = yup
       .required("이름을 필수 항목 입니다."),
   })
   .shape({
+    careerList: yup.array().of(
+      yup.object().shape({
+        startYear: yup.string().required("연도를 입력해주세요."),
+        startMonth: yup.string().required("월를 입력해주세요."),
+        endYear: yup.string().required("연도를 입력해주세요."),
+        endMonth: yup.string().required("월를 입력해주세요."),
+        content: yup.string().required("경력을 입력해주세요."),
+        // age: yup
+        //   .number()
+        //   .min(3, "3이상 값을 입력해주세요.")
+        //   .max(10, "10이하 값을 입력해주세요."),
+      })
+    ),
+
+    schoolList: yup.array().of(
+      yup.object().shape({
+        startYear: yup.string().required("연도를 입력해주세요."),
+        startMonth: yup.string().required("월를 입력해주세요."),
+        endYear: yup.string().required("연도를 입력해주세요."),
+        endMonth: yup.string().required("월를 입력해주세요."),
+        content: yup.string().required("학력을 입력해주세요."),
+        // age: yup
+        //   .number()
+        //   .min(3, "3이상 값을 입력해주세요.")
+        //   .max(10, "10이하 값을 입력해주세요."),
+      })
+    ),
+
+    licenseList: yup.array().of(
+      yup.object().shape({
+        registerYear: yup.string().required("연도를 입력해주세요."),
+        registerMonth: yup.string().required("월를 입력해주세요."),
+        licenseName: yup.string().required("자격증 이름을 입력해주세요."),
+        licenseNumber: yup.string().required("자격증 번호을 입력해주세요."),
+      })
+    ),
+
+    channelList: yup.array().of(
+      yup.object().shape({
+        channelLink: yup.string().required("링크를 입력해주세요."),
+      })
+    ),
     multiplePhoto: yup
       .mixed()
       .test(
