@@ -5,6 +5,10 @@ export const Block = styled.div`
   max-width: 1200px;
   margin: 0 auto;
   margin-bottom: 80px;
+
+  @media (max-width: 1200px) {
+    padding: 8px 20px;
+  }
 `;
 
 export const Label = styled.p`
@@ -106,6 +110,10 @@ export const SubmitButton = styled.button<{ btnType?: string }>`
 
   &:disabled {
     background-color: lightgray;
+  }
+
+  @media (max-width: 767px) {
+    padding: 7px 42px;
   }
 `;
 
