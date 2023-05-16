@@ -140,9 +140,15 @@ export const AddItemBlock = styled.div`
   border-bottom: 0.5px solid rgba(0, 0, 0, 0.15);
 `;
 
-export const Row = styled.div`
+export const Row = styled.div<{ column?: boolean }>`
   display: flex;
   justify-content: flex-start;
+
+  ${(props) =>
+    props.column &&
+    css`
+      flex-direction: column;
+    `};
 `;
 
 export const YearInput = styled.input`

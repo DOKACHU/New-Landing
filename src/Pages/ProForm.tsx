@@ -525,7 +525,7 @@ export default function BForm() {
                         control={control}
                         name={`careerList.${index}.startYear`}
                         render={({ field: { onChange, ...rest } }) => (
-                          <>
+                          <Row column>
                             <YearInput
                               {...rest}
                               type="text"
@@ -539,15 +539,16 @@ export default function BForm() {
                               {errors.careerList?.[index]?.startYear &&
                                 errors.careerList?.[index]?.startYear?.message}
                             </P>
-                          </>
+                          </Row>
                         )}
                       />
+
                       <span>.</span>
                       <Controller
                         control={control}
                         name={`careerList.${index}.startMonth`}
                         render={({ field: { onChange, ...rest } }) => (
-                          <>
+                          <Row column>
                             <MonthInput
                               {...rest}
                               type="text"
@@ -561,7 +562,7 @@ export default function BForm() {
                               {errors.careerList?.[index]?.startMonth &&
                                 errors.careerList?.[index]?.startMonth?.message}
                             </P>
-                          </>
+                          </Row>
                         )}
                       />
                     </Row>
@@ -570,7 +571,7 @@ export default function BForm() {
                         control={control}
                         name={`careerList.${index}.endYear`}
                         render={({ field: { onChange, ...rest } }) => (
-                          <>
+                          <Row column>
                             <YearInput
                               {...rest}
                               type="text"
@@ -584,7 +585,7 @@ export default function BForm() {
                               {errors.careerList?.[index]?.endYear &&
                                 errors.careerList?.[index]?.endYear?.message}
                             </P>
-                          </>
+                          </Row>
                         )}
                       />
                       <span>.</span>
@@ -592,7 +593,7 @@ export default function BForm() {
                         control={control}
                         name={`careerList.${index}.endMonth`}
                         render={({ field: { onChange, ...rest } }) => (
-                          <>
+                          <Row column>
                             <MonthInput
                               {...rest}
                               type="text"
@@ -606,7 +607,7 @@ export default function BForm() {
                               {errors.careerList?.[index]?.endMonth &&
                                 errors.careerList?.[index]?.endMonth?.message}
                             </P>
-                          </>
+                          </Row>
                         )}
                       />
                     </Row>
@@ -615,7 +616,7 @@ export default function BForm() {
                         control={control}
                         name={`careerList.${index}.content`}
                         render={({ field }) => (
-                          <>
+                          <Row column>
                             <ItemInput
                               {...field}
                               type="text"
@@ -626,7 +627,7 @@ export default function BForm() {
                               {errors.careerList?.[index]?.content &&
                                 errors.careerList?.[index]?.content?.message}
                             </P>
-                          </>
+                          </Row>
                         )}
                       />
                     </Row>
@@ -662,7 +663,7 @@ export default function BForm() {
                         control={control}
                         name={`schoolList.${index}.startYear`}
                         render={({ field: { onChange, ...rest } }) => (
-                          <>
+                          <Row column>
                             <YearInput
                               {...rest}
                               type="text"
@@ -676,7 +677,7 @@ export default function BForm() {
                               {errors.schoolList?.[index]?.startYear &&
                                 errors.schoolList?.[index]?.startYear?.message}
                             </P>
-                          </>
+                          </Row>
                         )}
                       />
                       <span>.</span>
@@ -684,7 +685,7 @@ export default function BForm() {
                         control={control}
                         name={`schoolList.${index}.startMonth`}
                         render={({ field: { onChange, ...rest } }) => (
-                          <>
+                          <Row column>
                             <MonthInput
                               {...rest}
                               type="text"
@@ -698,7 +699,7 @@ export default function BForm() {
                               {errors.schoolList?.[index]?.startMonth &&
                                 errors.schoolList?.[index]?.startMonth?.message}
                             </P>
-                          </>
+                          </Row>
                         )}
                       />
                     </Row>
@@ -707,7 +708,7 @@ export default function BForm() {
                         control={control}
                         name={`schoolList.${index}.endYear`}
                         render={({ field: { onChange, ...rest } }) => (
-                          <>
+                          <Row column>
                             <YearInput
                               {...rest}
                               type="text"
@@ -721,7 +722,7 @@ export default function BForm() {
                               {errors.schoolList?.[index]?.endYear &&
                                 errors.schoolList?.[index]?.endYear?.message}
                             </P>
-                          </>
+                          </Row>
                         )}
                       />
                       <span>.</span>
@@ -729,7 +730,7 @@ export default function BForm() {
                         control={control}
                         name={`schoolList.${index}.endMonth`}
                         render={({ field: { onChange, ...rest } }) => (
-                          <>
+                          <Row column>
                             <MonthInput
                               {...rest}
                               type="text"
@@ -743,7 +744,7 @@ export default function BForm() {
                               {errors.schoolList?.[index]?.endMonth &&
                                 errors.schoolList?.[index]?.endMonth?.message}
                             </P>
-                          </>
+                          </Row>
                         )}
                       />
                     </Row>
@@ -752,7 +753,7 @@ export default function BForm() {
                         control={control}
                         name={`schoolList.${index}.content`}
                         render={({ field }) => (
-                          <>
+                          <Row column>
                             <ItemInput
                               {...field}
                               type="text"
@@ -762,7 +763,7 @@ export default function BForm() {
                               {errors.schoolList?.[index]?.content &&
                                 errors.schoolList?.[index]?.content?.message}
                             </P>
-                          </>
+                          </Row>
                         )}
                       />
                     </Row>
@@ -798,7 +799,7 @@ export default function BForm() {
                         control={control}
                         name={`licenseList.${index}.licenseName`}
                         render={({ field }) => (
-                          <>
+                          <Row column>
                             <ItemInput
                               {...field}
                               type="text"
@@ -811,7 +812,7 @@ export default function BForm() {
                                 errors.licenseList?.[index]?.licenseName
                                   ?.message}
                             </P>
-                          </>
+                          </Row>
                         )}
                       />
                     </Row>
@@ -820,7 +821,7 @@ export default function BForm() {
                         control={control}
                         name={`licenseList.${index}.licenseNumber`}
                         render={({ field }) => (
-                          <>
+                          <Row column>
                             <ItemInput
                               {...field}
                               type="text"
@@ -832,7 +833,7 @@ export default function BForm() {
                                 errors.licenseList?.[index]?.licenseNumber
                                   ?.message}
                             </P>
-                          </>
+                          </Row>
                         )}
                       />
                     </Row>
@@ -841,7 +842,7 @@ export default function BForm() {
                         control={control}
                         name={`licenseList.${index}.registerYear`}
                         render={({ field: { onChange, ...rest } }) => (
-                          <>
+                          <Row column>
                             <YearInput
                               {...rest}
                               type="text"
@@ -856,7 +857,7 @@ export default function BForm() {
                                 errors.licenseList?.[index]?.registerYear
                                   ?.message}
                             </P>
-                          </>
+                          </Row>
                         )}
                       />
                       <span>.</span>
@@ -864,7 +865,7 @@ export default function BForm() {
                         control={control}
                         name={`licenseList.${index}.registerMonth`}
                         render={({ field: { onChange, ...rest } }) => (
-                          <>
+                          <Row column>
                             <MonthInput
                               {...rest}
                               type="text"
@@ -879,7 +880,7 @@ export default function BForm() {
                                 errors.licenseList?.[index]?.registerMonth
                                   ?.message}
                             </P>
-                          </>
+                          </Row>
                         )}
                       />
                     </Row>
@@ -916,7 +917,7 @@ export default function BForm() {
                         control={control}
                         name={`channelList.${index}.channelLink`}
                         render={({ field }) => (
-                          <>
+                          <Row column>
                             <ItemInput
                               style={{
                                 width: "300px",
@@ -933,7 +934,7 @@ export default function BForm() {
                                 errors.channelList?.[index]?.channelLink
                                   ?.message}
                             </P>
-                          </>
+                          </Row>
                         )}
                       />
                     </Row>
