@@ -145,10 +145,10 @@ export const Row = styled.div<{ column?: boolean }>`
   justify-content: flex-start;
   /* align-items: center; */
   ${(props) =>
-    props.column &&
+    props?.column &&
     css`
       flex-direction: column;
-    `};
+    `}
 `;
 
 export const YearInput = styled.input`

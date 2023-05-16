@@ -11,16 +11,8 @@ const monthRegExp = /^(1[0-2]|[1-9])$/;
 export const schema = yup
   .object({
     // test: yup.object().required(),
-    objList: yup
-      .array()
-      .min(1)
-      .max(3)
-      .of(
-        yup.object().shape({
-          name: yup.string().min(4),
-        })
-      )
-      .typeError("asdf"),
+
+    // .typeError("asdf"),
     desc: yup
       .string()
       .min(1, "병원소개는 1자리 이상 써주세요.")
@@ -65,6 +57,16 @@ export const schema = yup
     acceptTerms: yup.bool().oneOf([true], "Accept Terms is required"),
   })
   .shape({
+    objList: yup
+      .array()
+      .optional()
+      .min(1)
+      .max(3)
+      .of(
+        yup.object().shape({
+          name: yup.string().min(4),
+        })
+      ),
     tag: yup.string(),
     // tags: yup.array().of(yup.object()).required("태그는 필수 항목입니다."),
     // .test("required", "태그는 필수 항목입니다.", (value: any) =>

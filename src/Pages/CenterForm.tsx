@@ -76,7 +76,7 @@ export default function CenterForm({ handle }: any) {
       name: getLocalStorage.name,
       subject: { value: "00", label: "도수 치료" },
       location: { value: "00", label: "서울" },
-      objList: [],
+      objList: [{ name: "" }],
     },
     resolver: yupResolver(schema),
     reValidateMode: "onChange",
@@ -494,11 +494,13 @@ export default function CenterForm({ handle }: any) {
             {fields.map((obj, index) => {
               return (
                 <div key={index}>
-                  <Chip
-                    label={obj.name}
-                    key={index}
-                    onClick={() => handlee.clickDelete(index)}
-                  />
+                  {obj.name !== "" && (
+                    <Chip
+                      label={obj.name}
+                      key={index}
+                      onClick={() => handlee.clickDelete(index)}
+                    />
+                  )}
                   {/* <button onClick={() => handlee.clickDelete(index)}>
                     삭제
                   </button> */}

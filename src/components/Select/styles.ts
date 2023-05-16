@@ -13,10 +13,8 @@ export const CustomSelect = styled(Select)`
   }
   .react-select__indicator {
     display: none;
-
-    .react-select__dropdown-indicator {
-      /* background-color: #000000; */
-    }
   }
-  z-index: 9;
+  .react-select__menu {
+    z-index: 10 !important;
+  }
 `;
