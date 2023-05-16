@@ -37,49 +37,6 @@ export default function BForm() {
   const [rawImages, setRawImages] = useState<any>([]);
   const { mutate: createPro } = useCreatePro();
 
-  // const isNumber = [
-  //   "startYear",
-  //   "startMonth",
-  //   "endYear",
-  //   "endMonth",
-  //   "registerYear",
-  //   "registerMonth",
-  // ];
-  const [career, setCareer] = useState([
-    {
-      startYear: "",
-      startMonth: "",
-      endYear: "",
-      endMonth: "",
-      content: "",
-    },
-  ]);
-
-  const [school, setSchool] = useState([
-    {
-      startYear: "",
-      startMonth: "",
-      endYear: "",
-      endMonth: "",
-      content: "",
-    },
-  ]);
-
-  const [license, setLicense] = useState([
-    {
-      licenseName: "",
-      licenseNumber: "",
-      registerYear: "",
-      registerMonth: "",
-    },
-  ]);
-
-  const [channel, setChannel] = useState([
-    {
-      content: "",
-    },
-  ]);
-
   const getLocalStorage =
     localStorage.getItem("temp") === undefined
       ? null
@@ -179,44 +136,44 @@ export default function BForm() {
     formData.append("therapyCategory", subject?.label);
     formData.append("description", desc);
 
-    for (let i = 0; i < career.length; i++) {
-      formData.append(`careers[${i}][centerName]`, career[i].content);
+    for (let i = 0; i < fields.length; i++) {
+      formData.append(`careers[${i}][centerName]`, fields[i].content);
       formData.append(
         `careers[${i}][startDate]`,
-        `${career[i].startYear}-${career[i].startMonth}`
+        `${fields[i].startYear}-${fields[i].startMonth}`
       );
       formData.append(
         `careers[${i}][endDate]`,
-        `${career[i].endYear}-${career[i].endMonth}`
+        `${fields[i].endYear}-${fields[i].endMonth}`
       );
     }
 
-    for (let i = 0; i < school.length; i++) {
-      formData.append(`educations[${i}][schoolName]`, school[i].content);
+    for (let i = 0; i < schools.length; i++) {
+      formData.append(`educations[${i}][schoolName]`, schools[i].content);
       formData.append(
         `educations[${i}][startDate]`,
-        `${school[i].startYear}-${career[i].startMonth}`
+        `${schools[i].startYear}-${schools[i].startMonth}`
       );
       formData.append(
         `educations[${i}][endDate]`,
-        `${school[i].endYear}-${career[i].endMonth}`
+        `${schools[i].endYear}-${schools[i].endMonth}`
       );
     }
 
-    for (let i = 0; i < license.length; i++) {
-      formData.append(`licenses[${i}][licenseName]`, license[i].licenseName);
+    for (let i = 0; i < licenses.length; i++) {
+      formData.append(`licenses[${i}][licenseName]`, licenses[i].licenseName);
       formData.append(
         `licenses[${i}][licenseNumber]`,
-        license[i].licenseNumber
+        licenses[i].licenseNumber
       );
       formData.append(
         `licenses[${i}][issueDate]`,
-        `${license[i].registerYear}-${license[i].registerMonth}`
+        `${licenses[i].registerYear}-${licenses[i].registerMonth}`
       );
     }
 
-    for (let i = 0; i < channel.length; i++) {
-      formData.append(`channels[${i}]`, channel[i].content);
+    for (let i = 0; i < channels.length; i++) {
+      formData.append(`channels[${i}]`, channels[i].channelLink);
     }
 
     createPro(formData, {
