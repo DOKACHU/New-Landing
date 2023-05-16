@@ -143,7 +143,7 @@ export const AddItemBlock = styled.div`
 export const Row = styled.div<{ column?: boolean }>`
   display: flex;
   justify-content: flex-start;
-
+  /* align-items: center; */
   ${(props) =>
     props.column &&
     css`

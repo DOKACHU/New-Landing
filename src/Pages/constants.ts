@@ -3,6 +3,8 @@ import * as yup from "yup";
 const phoneRegExp =
   /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{2,4}?$/;
 const nameRegExp = /^[가-힣]{2,10}|[a-zA-Z]{2,10}\s[a-zA-Z]{2,10}$/;
+const yyyyRegExp = /^(19|20)\d{2}$/;
+const monthRegExp = /^(1[0-2]|[1-9])$/;
 // const bizzNumberRegExp = /^[0-9]{3}-[0-9]{2}-[0-9]{5}$/;
 
 // center
@@ -123,10 +125,22 @@ export const proSchema = yup
   .shape({
     careerList: yup.array().of(
       yup.object().shape({
-        startYear: yup.string().required("연도를 입력해주세요."),
-        startMonth: yup.string().required("월를 입력해주세요."),
-        endYear: yup.string().required("연도를 입력해주세요."),
-        endMonth: yup.string().required("월를 입력해주세요."),
+        startYear: yup
+          .string()
+          .matches(yyyyRegExp, "1900-2099년도 사이로 입력해주세요.")
+          .required("연도를 입력해주세요."),
+        startMonth: yup
+          .string()
+          .matches(monthRegExp, "1-12월로 입력해주세요.")
+          .required("월를 입력해주세요."),
+        endYear: yup
+          .string()
+          .matches(yyyyRegExp, "1900-2099년도 사이로 입력해주세요.")
+          .required("연도를 입력해주세요."),
+        endMonth: yup
+          .string()
+          .matches(monthRegExp, "1-12월로 입력해주세요.")
+          .required("월를 입력해주세요."),
         content: yup.string().required("병원명을 입력해주세요."),
         // age: yup
         //   .number()
@@ -137,10 +151,22 @@ export const proSchema = yup
 
     schoolList: yup.array().of(
       yup.object().shape({
-        startYear: yup.string().required("연도를 입력해주세요."),
-        startMonth: yup.string().required("월를 입력해주세요."),
-        endYear: yup.string().required("연도를 입력해주세요."),
-        endMonth: yup.string().required("월를 입력해주세요."),
+        startYear: yup
+          .string()
+          .matches(yyyyRegExp, "1900-2099년도 사이로 입력해주세요.")
+          .required("연도를 입력해주세요."),
+        startMonth: yup
+          .string()
+          .matches(monthRegExp, "1-12월로 입력해주세요.")
+          .required("월를 입력해주세요."),
+        endYear: yup
+          .string()
+          .matches(yyyyRegExp, "1900-2099년도 사이로 입력해주세요.")
+          .required("연도를 입력해주세요."),
+        endMonth: yup
+          .string()
+          .matches(monthRegExp, "1-12월로 입력해주세요.")
+          .required("월를 입력해주세요."),
         content: yup.string().required("학력을 입력해주세요."),
         // age: yup
         //   .number()
@@ -151,8 +177,14 @@ export const proSchema = yup
 
     licenseList: yup.array().of(
       yup.object().shape({
-        registerYear: yup.string().required("연도를 입력해주세요."),
-        registerMonth: yup.string().required("월를 입력해주세요."),
+        registerYear: yup
+          .string()
+          .matches(yyyyRegExp, "1900-2099년도 사이로 입력해주세요.")
+          .required("연도를 입력해주세요."),
+        registerMonth: yup
+          .string()
+          .matches(monthRegExp, "1-12월로 입력해주세요.")
+          .required("월를 입력해주세요."),
         licenseName: yup.string().required("자격증 이름을 입력해주세요."),
         licenseNumber: yup.string().required("자격증 번호을 입력해주세요."),
       })

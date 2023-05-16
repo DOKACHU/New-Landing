@@ -623,10 +623,12 @@ export default function BForm() {
                               name="content"
                               placeholder="병원명"
                             />
-                            <P>
-                              {errors.careerList?.[index]?.content &&
-                                errors.careerList?.[index]?.content?.message}
-                            </P>
+
+                            {errors.careerList?.[index]?.content && (
+                              <P>
+                                {errors.careerList?.[index]?.content?.message}
+                              </P>
+                            )}
                           </Row>
                         )}
                       />
