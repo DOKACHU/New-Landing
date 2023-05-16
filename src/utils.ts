@@ -46,3 +46,7 @@ export function checkProperties(obj: any) {
   }
   return true;
 }
+
+export const allowOnlyNumber = (value: any) => {
+  return value.replace(/[^0-9]/g, "");
+};

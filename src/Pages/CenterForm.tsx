@@ -33,6 +33,7 @@ import { schema } from "./constants";
 import arrow from "./arrow.png";
 import DaumPostcode from "react-daum-postcode";
 import { useCreateCenter } from "../hooks";
+import { allowOnlyNumber } from "../utils";
 
 type FormData = yup.InferType<typeof schema>;
 const style = {
@@ -78,6 +79,8 @@ export default function CenterForm({ handle }: any) {
       objList: [],
     },
     resolver: yupResolver(schema),
+    reValidateMode: "onChange",
+    mode: "onChange",
   });
 
   const { fields, append, remove } = useFieldArray({
@@ -341,8 +344,20 @@ export default function CenterForm({ handle }: any) {
           {/*  */}
           <Grid item xs={6}>
             <Label>사업자 등록번호 *</Label>
-            <Input {...register("bizzNum")} placeholder="'-' 제외하고 10자리" />
-            <P>{errors.bizzNum?.message}</P>
+            <Controller
+              control={control}
+              name="bizzNum"
+              render={({ field: { onChange, ...rest } }) => (
+                <>
+                  <Input
+                    {...rest}
+                    onChange={(e) => onChange(allowOnlyNumber(e.target.value))}
+                    placeholder="'-' 제외하고 10자리"
+                  />
+                  <P>{errors.bizzNum?.message}</P>
+                </>
+              )}
+            />
           </Grid>
 
           {/*  */}
@@ -368,12 +383,24 @@ export default function CenterForm({ handle }: any) {
             />
           </Grid>
 
-          {/* 주소 */}
           <Grid item xs={6}>
             <Label>치료사 수 *</Label>
-            <Input {...register("proNumber")} placeholder="치료사 수" />
-            <P>{errors.proNumber?.message}</P>
+            <Controller
+              control={control}
+              name="proNumber"
+              render={({ field: { onChange, ...rest } }) => (
+                <>
+                  <Input
+                    {...rest}
+                    onChange={(e) => onChange(allowOnlyNumber(e.target.value))}
+                    placeholder="치료사 수"
+                  />
+                  <P>{errors.proNumber?.message}</P>
+                </>
+              )}
+            />
           </Grid>
+
           {/* single */}
           <Grid item xs={6}>
             <p>사업자 이미지 등록*</p>
