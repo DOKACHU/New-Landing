@@ -535,6 +535,10 @@ export default function BForm() {
                                 onChange(allowOnlyNumber(e.target.value))
                               }
                             />
+                            <P>
+                              {errors.careerList?.[index]?.startYear &&
+                                errors.careerList?.[index]?.startYear?.message}
+                            </P>
                           </>
                         )}
                       />
@@ -553,6 +557,10 @@ export default function BForm() {
                                 onChange(allowOnlyNumber(e.target.value))
                               }
                             />
+                            <P>
+                              {errors.careerList?.[index]?.startMonth &&
+                                errors.careerList?.[index]?.startMonth?.message}
+                            </P>
                           </>
                         )}
                       />
@@ -572,6 +580,10 @@ export default function BForm() {
                                 onChange(allowOnlyNumber(e.target.value))
                               }
                             />
+                            <P>
+                              {errors.careerList?.[index]?.endYear &&
+                                errors.careerList?.[index]?.endYear?.message}
+                            </P>
                           </>
                         )}
                       />
@@ -590,6 +602,10 @@ export default function BForm() {
                                 onChange(allowOnlyNumber(e.target.value))
                               }
                             />
+                            <P>
+                              {errors.careerList?.[index]?.endMonth &&
+                                errors.careerList?.[index]?.endMonth?.message}
+                            </P>
                           </>
                         )}
                       />
@@ -606,6 +622,10 @@ export default function BForm() {
                               name="content"
                               placeholder="병원명"
                             />
+                            <P>
+                              {errors.careerList?.[index]?.content &&
+                                errors.careerList?.[index]?.content?.message}
+                            </P>
                           </>
                         )}
                       />
@@ -652,6 +672,10 @@ export default function BForm() {
                                 onChange(allowOnlyNumber(e.target.value))
                               }
                             />
+                            <P>
+                              {errors.schoolList?.[index]?.startYear &&
+                                errors.schoolList?.[index]?.startYear?.message}
+                            </P>
                           </>
                         )}
                       />
@@ -670,6 +694,10 @@ export default function BForm() {
                                 onChange(allowOnlyNumber(e.target.value))
                               }
                             />
+                            <P>
+                              {errors.schoolList?.[index]?.startMonth &&
+                                errors.schoolList?.[index]?.startMonth?.message}
+                            </P>
                           </>
                         )}
                       />
@@ -689,6 +717,10 @@ export default function BForm() {
                                 onChange(allowOnlyNumber(e.target.value))
                               }
                             />
+                            <P>
+                              {errors.schoolList?.[index]?.endYear &&
+                                errors.schoolList?.[index]?.endYear?.message}
+                            </P>
                           </>
                         )}
                       />
@@ -707,6 +739,10 @@ export default function BForm() {
                                 onChange(allowOnlyNumber(e.target.value))
                               }
                             />
+                            <P>
+                              {errors.schoolList?.[index]?.endMonth &&
+                                errors.schoolList?.[index]?.endMonth?.message}
+                            </P>
                           </>
                         )}
                       />
@@ -720,9 +756,12 @@ export default function BForm() {
                             <ItemInput
                               {...field}
                               type="text"
-                              name="content"
                               placeholder="학력"
                             />
+                            <P>
+                              {errors.schoolList?.[index]?.content &&
+                                errors.schoolList?.[index]?.content?.message}
+                            </P>
                           </>
                         )}
                       />
@@ -767,6 +806,11 @@ export default function BForm() {
                               maxLength={10}
                               placeholder={"자격증 이름"}
                             />
+                            <P>
+                              {errors.licenseList?.[index]?.licenseName &&
+                                errors.licenseList?.[index]?.licenseName
+                                  ?.message}
+                            </P>
                           </>
                         )}
                       />
@@ -780,10 +824,14 @@ export default function BForm() {
                             <ItemInput
                               {...field}
                               type="text"
-                              name="content"
                               maxLength={10}
                               placeholder={"자격증 번호"}
                             />
+                            <P>
+                              {errors.licenseList?.[index]?.licenseNumber &&
+                                errors.licenseList?.[index]?.licenseNumber
+                                  ?.message}
+                            </P>
                           </>
                         )}
                       />
@@ -803,6 +851,11 @@ export default function BForm() {
                                 onChange(allowOnlyNumber(e.target.value))
                               }
                             />
+                            <P>
+                              {errors.licenseList?.[index]?.registerYear &&
+                                errors.licenseList?.[index]?.registerYear
+                                  ?.message}
+                            </P>
                           </>
                         )}
                       />
@@ -821,6 +874,11 @@ export default function BForm() {
                                 onChange(allowOnlyNumber(e.target.value))
                               }
                             />
+                            <P>
+                              {errors.licenseList?.[index]?.registerMonth &&
+                                errors.licenseList?.[index]?.registerMonth
+                                  ?.message}
+                            </P>
                           </>
                         )}
                       />
@@ -870,6 +928,11 @@ export default function BForm() {
                                 "ex) https://www.youtube.com/watch?v=test"
                               }
                             />
+                            <P>
+                              {errors.channelList?.[index]?.channelLink &&
+                                errors.channelList?.[index]?.channelLink
+                                  ?.message}
+                            </P>
                           </>
                         )}
                       />

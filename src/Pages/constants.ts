@@ -127,7 +127,7 @@ export const proSchema = yup
         startMonth: yup.string().required("월를 입력해주세요."),
         endYear: yup.string().required("연도를 입력해주세요."),
         endMonth: yup.string().required("월를 입력해주세요."),
-        content: yup.string().required("경력을 입력해주세요."),
+        content: yup.string().required("병원명을 입력해주세요."),
         // age: yup
         //   .number()
         //   .min(3, "3이상 값을 입력해주세요.")
@@ -160,7 +160,13 @@ export const proSchema = yup
 
     channelList: yup.array().of(
       yup.object().shape({
-        channelLink: yup.string().required("링크를 입력해주세요."),
+        channelLink: yup
+          .string()
+          .matches(
+            /((https?):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/,
+            "정확한 URL 을 넣어주세요."
+          )
+          .required("링크를 입력해주세요."),
       })
     ),
     multiplePhoto: yup
