@@ -28,11 +28,11 @@ import {
   TagInput,
   TagButton,
 } from "./styles";
-import { Select } from "../components";
+import { Select, Spinner } from "../components";
 import { schema } from "./constants";
 import arrow from "./arrow.png";
 import DaumPostcode from "react-daum-postcode";
-import { useCreateCenter } from "../hooks";
+import { useCreateCenter, useModal } from "../hooks";
 import { allowOnlyNumber } from "../utils";
 
 type FormData = yup.InferType<typeof schema>;
@@ -43,7 +43,7 @@ const style = {
   transform: "translate(-50%, -50%)",
   width: 400,
   bgcolor: "background.paper",
-  border: "2px solid #000",
+  // border: "2px solid #000",
   boxShadow: 24,
   p: 4,
 };
@@ -55,13 +55,13 @@ export default function CenterForm({ handle }: any) {
   const [selectedImage, setSelectedImage] = useState<any>(null);
   const [multipleImages, setMultipleImages] = useState<any>([]);
   const [rawImages, setRawImages] = useState<any>([]);
-  const { mutate: createCenter } = useCreateCenter();
+  const { mutate: createCenter, isLoading } = useCreateCenter();
 
-  const getLocalStorage =
-    localStorage.getItem("temp") === undefined
-      ? null
-      : JSON.parse(localStorage.getItem("temp") || "{}");
-
+  // const getLocalStorage =
+  //   localStorage.getItem("temp") === undefined
+  //     ? null
+  //     : JSON.parse(localStorage.getItem("temp") || "{}");
+  const { visible, handleClose, handleOpen } = useModal();
   const {
     control,
     register,
@@ -73,10 +73,13 @@ export default function CenterForm({ handle }: any) {
     formState: { errors },
   } = useForm<FormData>({
     defaultValues: {
-      name: getLocalStorage.name,
+      name: "",
       subject: { value: "00", label: "도수 치료" },
       location: { value: "00", label: "서울" },
       objList: [{ name: "" }],
+      proNumber: 0,
+      address2: "",
+      desc: "",
     },
     resolver: yupResolver(schema),
     reValidateMode: "onChange",
@@ -134,8 +137,7 @@ export default function CenterForm({ handle }: any) {
 
   // submit
   const onSubmit = (data: FormData) => {
-    // const isSubmit = ErrorEmptyCheck(errors);
-    // if (isSubmit) {
+    // onReset();
     const {
       name,
       proNumber,
@@ -148,7 +150,7 @@ export default function CenterForm({ handle }: any) {
       email,
       desc,
     } = data as any;
-    console.log({ data });
+    // console.log({ data });
     const formData = new FormData(); // 새로운 폼 객체 생성
     for (let i = 0; i < rawImages.length; i++) {
       formData.append("centerImages", rawImages[i]);
@@ -175,11 +177,14 @@ export default function CenterForm({ handle }: any) {
     createCenter(formData, {
       onError: (e) => {
         console.log({ e });
+        alert("네트워크 오류 발생 ");
       },
       onSuccess: (res) => {
         console.log({ res });
-        onReset();
-        alert("센터 입점 양식 등록 완료 ");
+        if (res.status === 201) {
+          onReset();
+          handleOpen();
+        }
       },
     });
 
@@ -190,28 +195,18 @@ export default function CenterForm({ handle }: any) {
 
   const onReset = () => {
     reset();
+    setValue("address1", "");
+    setValue("address1", "");
+
     setSelectedImage(null);
     setPreview(null);
     setMultipleImages([]);
     setRawImages([]);
-    localStorage.removeItem("temp");
-    localStorage.removeItem("singleImg");
-    localStorage.removeItem("singleImgPreview");
-    localStorage.removeItem("multiImg");
-    localStorage.removeItem("multiImgPreview");
   };
 
-  // const onSave = () => {
-  //   const saveObj = {
-  //     name: watch("name"),
-  //     phone: watch("phone"),
-  //   };
-  //   localStorage.setItem("temp", JSON.stringify(saveObj));
-  //   localStorage.setItem("singleImg", selectedImage);
-  //   localStorage.setItem("singleImgPreview", preview);
-  //   localStorage.setItem("multiImg", multipleImages);
-  //   localStorage.setItem("multiImgPreview", rawImages);
-  // };
+  if (isLoading) {
+    return <Spinner />;
+  }
 
   return (
     <Block>
@@ -332,7 +327,7 @@ export default function CenterForm({ handle }: any) {
                   <Label>상세 주소*</Label>
                   <Input
                     {...field}
-                    // {...register("address2")}
+                    {...register("address2")}
                     placeholder="상세 주소 입력"
                   />
                   <P>{errors.address2?.message}</P>
@@ -351,6 +346,7 @@ export default function CenterForm({ handle }: any) {
                 <>
                   <Input
                     {...rest}
+                    {...register("bizzNum")}
                     onChange={(e) => onChange(allowOnlyNumber(e.target.value))}
                     placeholder="'-' 제외하고 10자리"
                   />
@@ -388,10 +384,12 @@ export default function CenterForm({ handle }: any) {
             <Controller
               control={control}
               name="proNumber"
-              render={({ field: { onChange, ...rest } }) => (
+              render={({ field: { onChange, value, ...rest } }) => (
                 <>
                   <Input
+                    value={value === 0 ? "" : value}
                     {...rest}
+                    {...register("proNumber")}
                     onChange={(e) => onChange(allowOnlyNumber(e.target.value))}
                     placeholder="치료사 수"
                   />
@@ -434,6 +432,7 @@ export default function CenterForm({ handle }: any) {
                     <TextArea
                       value={value}
                       {...rest}
+                      {...register("desc")}
                       rows={8}
                       placeholder="병원 소개를 적어주세요."
                     />
@@ -461,7 +460,12 @@ export default function CenterForm({ handle }: any) {
               render={({ field: { value, ...rest } }) => {
                 const result = phoneNumber(value);
                 return (
-                  <Input value={result} {...rest} placeholder="핸드폰 번호" />
+                  <Input
+                    value={result}
+                    {...rest}
+                    {...register("phone")}
+                    placeholder="핸드폰 번호"
+                  />
                 );
               }}
             />
@@ -536,10 +540,12 @@ export default function CenterForm({ handle }: any) {
                   control={control}
                   name="acceptTerms"
                   defaultValue={false}
-                  render={({ field: { onChange } }) => (
+                  render={({ field }) => (
                     <Checkbox
                       color="primary"
-                      onChange={(e) => onChange(e.target.checked)}
+                      {...register("acceptTerms")}
+                      {...field}
+                      checked={field["value"] ?? false}
                     />
                   )}
                 />
@@ -550,10 +556,27 @@ export default function CenterForm({ handle }: any) {
                 </Typography>
               }
             />
+            {/* <button onClick={handleOpen}>모달</button> */}
+
             <SubmitButton type="submit">보내기</SubmitButton>
           </div>
         </Footer>
       </form>
+      <Modal
+        open={visible}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            센터 등록 완료
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            정상적으로 센터 등록이 완료 되었습니다.
+          </Typography>
+        </Box>
+      </Modal>
     </Block>
   );
 }

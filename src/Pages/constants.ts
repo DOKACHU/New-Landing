@@ -46,7 +46,6 @@ export const schema = yup
       .number()
       .min(1, "치료사 수는 1이상 써주세요.")
       .max(999, "치료사 수는 999이하로 써주세요.")
-      .positive("양수만 허용됩니다.")
       .typeError("치료사 수는 숫자만 가능합니다.")
       .required("치료사 수는 필수 항목 입니다."), // number 에러 시, typeError 로 작성
 
@@ -60,11 +59,11 @@ export const schema = yup
     objList: yup
       .array()
       .optional()
-      .min(1)
+      // .min(1)
       .max(3)
       .of(
         yup.object().shape({
-          name: yup.string().min(4),
+          name: yup.string().optional(),
         })
       ),
     tag: yup.string(),
