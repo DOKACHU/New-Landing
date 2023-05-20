@@ -1055,9 +1055,9 @@ export default function BForm() {
               {/* <button type="button" onClick={onReset}>
                 리셋
               </button> */}
-              <button type="button" onClick={handleOpen}>
+              {/* <button type="button" onClick={handleOpen}>
                 모달
-              </button>
+              </button> */}
 
               <SubmitButton type="button" btnType="save" onClick={onSave}>
                 임시저장
