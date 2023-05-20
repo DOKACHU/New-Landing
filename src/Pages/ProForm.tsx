@@ -1,10 +1,19 @@
 import { useForm, Controller, useFieldArray } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { Grid, Typography } from "@mui/material";
+import {
+  Grid,
+  Typography,
+  Alert,
+  Collapse,
+  IconButton,
+  Modal,
+  Box,
+} from "@mui/material";
+import { Close } from "@mui/icons-material";
+
 import { P } from "../styles";
-import { useState } from "react";
-// import { ErrorEmptyCheck } from "../utils";
+import { useState, useEffect } from "react";
 import { proSchema } from "./constants";
 import {
   Block,
@@ -24,23 +33,38 @@ import {
   MonthInput,
   ItemInput,
 } from "./styles";
-import { Select } from "../components";
+import { Select, Spinner } from "../components";
 import arrow from "./arrow.png";
-import { useCreatePro } from "../hooks";
+import { useCreatePro, useModal } from "../hooks";
 import { allowOnlyNumber } from "../utils";
 type FormData = yup.InferType<typeof proSchema>;
 
+const style = {
+  position: "absolute" as const,
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  // border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
+
 export default function BForm() {
+  const [open, setOpen] = useState(false);
+  const { visible, handleClose, handleOpen } = useModal();
+
   const [preview, setPreview] = useState<any>(null);
   const [selectedImage, setSelectedImage] = useState<any>(null);
   const [multipleImages, setMultipleImages] = useState<any>([]);
   const [rawImages, setRawImages] = useState<any>([]);
-  const { mutate: createPro } = useCreatePro();
+  const { mutate: createPro, isLoading } = useCreatePro();
 
-  const getLocalStorage =
-    localStorage.getItem("temp") === undefined
-      ? null
-      : JSON.parse(localStorage.getItem("temp") || "{}");
+  // const getLocalStorage =
+  //   localStorage.getItem("temp") === undefined
+  //     ? null
+  //     : JSON.parse(localStorage.getItem("temp") || "{}");
 
   const {
     control,
@@ -51,10 +75,12 @@ export default function BForm() {
     formState: { errors },
   } = useForm<FormData>({
     defaultValues: {
-      name: getLocalStorage.name,
-      subject: { value: "00", label: "도수 치료" },
+      // name: getLocalStorage.name,
+      name: "",
       gender: { value: "male", label: "남자" },
       location: { value: "00", label: "서울" },
+      subject: { value: "00", label: "도수 치료" },
+      desc: "",
       careerList: [
         {
           startYear: "",
@@ -121,8 +147,18 @@ export default function BForm() {
     // const isSubmit = ErrorEmptyCheck(errors);
     // if (isSubmit) {    console.log({ data });
 
-    const { name, location, subject, desc, gender } = data as any;
-    console.log({ location, subject });
+    const {
+      name,
+      location,
+      subject,
+      desc,
+      gender,
+      careerList,
+      schoolList,
+      licenseList,
+      channelList,
+    } = data as any;
+    console.log({ data });
 
     const formData = new FormData(); // 새로운 폼 객체 생성
     for (let i = 0; i < rawImages.length; i++) {
@@ -136,53 +172,60 @@ export default function BForm() {
     formData.append("therapyCategory", subject?.label);
     formData.append("description", desc);
 
-    for (let i = 0; i < fields.length; i++) {
-      formData.append(`careers[${i}][centerName]`, fields[i].content);
+    for (let i = 0; i < careerList.length; i++) {
+      formData.append(`careers[${i}][centerName]`, careerList[i].content);
       formData.append(
         `careers[${i}][startDate]`,
-        `${fields[i].startYear}-${fields[i].startMonth}`
+        `${careerList[i].startYear}-${careerList[i].startMonth}`
       );
       formData.append(
         `careers[${i}][endDate]`,
-        `${fields[i].endYear}-${fields[i].endMonth}`
+        `${careerList[i].endYear}-${careerList[i].endMonth}`
       );
     }
 
-    for (let i = 0; i < schools.length; i++) {
-      formData.append(`educations[${i}][schoolName]`, schools[i].content);
+    for (let i = 0; i < schoolList.length; i++) {
+      formData.append(`educations[${i}][schoolName]`, schoolList[i].content);
       formData.append(
         `educations[${i}][startDate]`,
-        `${schools[i].startYear}-${schools[i].startMonth}`
+        `${schoolList[i].startYear}-${schoolList[i].startMonth}`
       );
       formData.append(
         `educations[${i}][endDate]`,
-        `${schools[i].endYear}-${schools[i].endMonth}`
+        `${schoolList[i].endYear}-${schoolList[i].endMonth}`
       );
     }
 
-    for (let i = 0; i < licenses.length; i++) {
-      formData.append(`licenses[${i}][licenseName]`, licenses[i].licenseName);
+    for (let i = 0; i < licenseList.length; i++) {
+      formData.append(
+        `licenses[${i}][licenseName]`,
+        licenseList[i].licenseName
+      );
       formData.append(
         `licenses[${i}][licenseNumber]`,
-        licenses[i].licenseNumber
+        licenseList[i].licenseNumber
       );
       formData.append(
         `licenses[${i}][issueDate]`,
-        `${licenses[i].registerYear}-${licenses[i].registerMonth}`
+        `${licenseList[i].registerYear}-${licenseList[i].registerMonth}`
       );
     }
 
-    for (let i = 0; i < channels.length; i++) {
-      formData.append(`channels[${i}]`, channels[i].channelLink);
+    for (let i = 0; i < channelList.length; i++) {
+      formData.append(`channels[${i}]`, channelList[i]?.channelLink || "");
     }
 
     createPro(formData, {
       onError: (e) => {
         console.log({ e });
+        alert("네트워크 오류 발생 ");
       },
       onSuccess: (res) => {
-        onReset();
-        alert("프로 입점 양식 등록 완료 ");
+        console.log({ res });
+        if (res.status === 201) {
+          onReset();
+          handleOpen();
+        }
       },
     });
     // console.log({ selectedImage, multipleImages, rawImages });
@@ -206,6 +249,14 @@ export default function BForm() {
   const onSave = () => {
     const saveObj = {
       name: watch("name"),
+      desc: watch("desc"),
+      gender: watch("gender"),
+      location: watch("location"),
+      subject: watch("subject"),
+      careerList: watch("careerList"),
+      schoolList: watch("schoolList"),
+      licenseList: watch("licenseList"),
+      channelList: watch("channelList"),
       // phone: watch("phone"),
     };
     localStorage.setItem("temp", JSON.stringify(saveObj));
@@ -213,6 +264,7 @@ export default function BForm() {
     localStorage.setItem("singleImgPreview", preview);
     localStorage.setItem("multiImg", multipleImages);
     localStorage.setItem("multiImgPreview", rawImages);
+    setOpen(true);
   };
 
   // console.log({ career, school, license, channel });
@@ -340,8 +392,47 @@ export default function BForm() {
     },
   };
 
+  useEffect(() => {
+    const timeId = setTimeout(() => {
+      // After 3 seconds set the show value to false
+      setOpen(false);
+    }, 1000);
+
+    return () => {
+      clearTimeout(timeId);
+    };
+  }, [open]);
+
   return (
     <Block>
+      {isLoading && <Spinner />}
+      <div
+        style={{
+          position: "fixed",
+          top: 10,
+          right: 10,
+        }}
+      >
+        <Collapse in={open}>
+          <Alert
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={() => {
+                  setOpen(false);
+                }}
+              >
+                <Close fontSize="inherit" />
+              </IconButton>
+            }
+            sx={{ mb: 2 }}
+          >
+            임시 저장 완료
+          </Alert>
+        </Collapse>
+      </div>
       <Typography
         style={{
           marginTop: "56px",
@@ -351,7 +442,6 @@ export default function BForm() {
       >
         프로필 정보를 등록해주세요.
       </Typography>
-
       <Typography variant="subtitle1" gutterBottom fontWeight={600}>
         도카츄는 병원 / 치료사들에게 편리한 환경을 제공하기 위해, 다음 정보를
         리뷰하여 병원 등록을 승인하고 있습니다
@@ -962,6 +1052,13 @@ export default function BForm() {
                 gap: "10px",
               }}
             >
+              {/* <button type="button" onClick={onReset}>
+                리셋
+              </button> */}
+              <button type="button" onClick={handleOpen}>
+                모달
+              </button>
+
               <SubmitButton type="button" btnType="save" onClick={onSave}>
                 임시저장
               </SubmitButton>
@@ -970,6 +1067,21 @@ export default function BForm() {
           </Footer>
         </Grid>
       </form>
+      <Modal
+        open={visible}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            프로 등록 완료
+          </Typography>
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+            정상적으로 프로 등록이 완료 되었습니다.
+          </Typography>
+        </Box>
+      </Modal>
     </Block>
   );
 }

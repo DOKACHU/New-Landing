@@ -204,12 +204,13 @@ export default function CenterForm({ handle }: any) {
     setRawImages([]);
   };
 
-  if (isLoading) {
-    return <Spinner />;
-  }
+  // if (isLoading) {
+  //   return <Spinner />;
+  // }
 
   return (
     <Block>
+      {isLoading && <Spinner />}
       <Typography
         style={{
           marginTop: "56px",

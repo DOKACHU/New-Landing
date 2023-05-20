@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 import * as yup from "yup";
 
 const phoneRegExp =
@@ -5,6 +6,8 @@ const phoneRegExp =
 const nameRegExp = /^[가-힣]{2,10}|[a-zA-Z]{2,10}\s[a-zA-Z]{2,10}$/;
 const yyyyRegExp = /^(19|20)\d{2}$/;
 const monthRegExp = /^(1[0-2]|[1-9])$/;
+const linkRegEXP =
+  /^(|https?:\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?)$/;
 // const bizzNumberRegExp = /^[0-9]{3}-[0-9]{2}-[0-9]{5}$/;
 
 // center
@@ -192,15 +195,17 @@ export const proSchema = yup
     ),
 
     channelList: yup.array().of(
-      yup.object().shape({
-        channelLink: yup
-          .string()
-          .matches(
-            /((https?):\/\/)?(www.)?[a-z0-9]+(\.[a-z]{2,}){1,3}(#?\/?[a-zA-Z0-9#]+)*\/?(\?[a-zA-Z0-9-_]+=[a-zA-Z0-9-%]+&?)?$/,
-            "정확한 URL 을 넣어주세요."
-          )
-          .required("링크를 입력해주세요."),
-      })
+      yup
+        .object()
+        .optional()
+        .shape({
+          channelLink: yup
+            .string()
+            .matches(linkRegEXP, "정확한 URL 을 넣어주세요."),
+          // .optional(),
+
+          // .required("링크를 입력해주세요."),
+        })
     ),
     multiplePhoto: yup
       .mixed()
